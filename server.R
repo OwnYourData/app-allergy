@@ -48,21 +48,27 @@ shinyServer(function(input, output, session) {
                 url <- input$allergy_url
                 app_key <- input$allergy_app_key
                 app_secret <- input$allergy_app_secret
-                if((nchar(url) > 0) & 
-                   (nchar(app_key) > 0) & 
-                   (nchar(app_secret) > 0)) {
-                        if(input$localAllergySave) {
-                                save(url, 
-                                     app_key, 
-                                     app_secret, 
-                                     file='~/allergyCredentials.RData')
-                        } else {
-                                # if (file.exists('~/allergyCredentials.RData'))
-                                #         file.remove('~/allergyCredentials.RData')
-                        }
-                        getRepo(url, app_key, app_secret)
-                } else {
+                if(is.null(url) |
+                   is.null(app_key) | 
+                   is.null(app_secret)) {
                         vector()
+                } else {
+                        if((nchar(url) > 0) & 
+                           (nchar(app_key) > 0) & 
+                           (nchar(app_secret) > 0)) {
+                                if(input$localAllergySave) {
+                                        save(url, 
+                                             app_key, 
+                                             app_secret, 
+                                             file='~/allergyCredentials.RData')
+                                } else {
+                                        # if (file.exists('~/allergyCredentials.RData'))
+                                        #         file.remove('~/allergyCredentials.RData')
+                                }
+                                getRepo(url, app_key, app_secret)
+                        } else {
+                                vector()
+                        }
                 }
         })
 
@@ -110,7 +116,6 @@ shinyServer(function(input, output, session) {
                         data <- data[, !names(data) %in% c('id')]
                         m_data <- data
                 }
-                save(data, p_data, c_data, m_data, file="tmpDataDetails.RData")
                 data
         }
         
@@ -122,7 +127,6 @@ shinyServer(function(input, output, session) {
                 mymax <- as.Date(input$dateRange[2], "%Y-%m-%d")
                 daterange <- seq(mymin, mymax, "days")
                 data <- data[data$date %in% daterange, ]
-                save(data, file="tmpPlot.RData")
                 if(nrow(data) > 0) {
                         closeAlert(session, 'noDataAlert')
                         data <- data[with(data, order(date)),]
@@ -231,6 +235,7 @@ shinyServer(function(input, output, session) {
                       format(Sys.time(), '%H:%M:%S'))
         })
         
+        
 # Allergy specific output fields ==========================
         output$plot <- renderPlot({
                 input$exportButton
@@ -242,12 +247,13 @@ shinyServer(function(input, output, session) {
                         first <<- FALSE                  
                 }
                 repo <- allergyRepo()
-                if (length(repo)>0 & !is.na(repo[['token']])) {
-                        closeAlert(session, 'noPIAAlert')
-                        data <- allAllergyData()
-                        save(data, file="tmpAll.RData")
-                        if (nrow(data) > 0) {
-                                plotData(data)
+                if (length(repo)>0) {
+                        if (!is.na(repo[['token']])) {
+                                closeAlert(session, 'noPIAAlert')
+                                data <- allAllergyData()
+                                if (nrow(data) > 0) {
+                                        plotData(data)
+                                }
                         }
                 }
         })
