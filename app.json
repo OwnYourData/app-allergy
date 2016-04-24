@@ -1,0 +1,8 @@
+{
+  "name": "Allergie-Tagebuch",
+  "description": "Vergleiche gemessene Pollenbelastung mit deinem subjektiven Befinden",
+  "repository": "https://github.com/OwnYourData/app-allergy",
+  "keywords": ["ownyourdata", "gesundheit", "allergien", "pollenbelastung"],
+  "website": "https://www.ownyourdata.eu",
+  "buildpacks": [{ "url": "http://github.com/virtualstaticvoid/heroku-buildpack-r" }]
+}

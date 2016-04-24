@@ -235,6 +235,36 @@ shinyServer(function(input, output, session) {
                       format(Sys.time(), '%H:%M:%S'))
         })
         
+        getPiaPollConfig <- function(repo){
+                url <- itemsUrl(repo[['url']], 
+                                schedulerKey())
+                retVal <- readItems(repo, url)
+                retVal <- retVal[retVal$repo == repo[['app_key']], ]
+                if(length(retVal) == 0 | 
+                   nrow(retVal) == 0) {
+                        vector()
+                } else {
+                        retVal
+                }
+        }
+
+        pollinationStatus <- reactive({
+                repo <- allergyRepo()
+                pollConfig <- getPiaPollConfig(repo)
+                if (length(pollConfig) > 0) {
+                        piaAllergy <- pollConfig[['allergy']]
+                        piaPlz <-  pollConfig[['plz']]
+                        if((piaAllergy != input$allergy) |
+                           (piaPlz != input$plz)) {
+                                'update config'
+                        } else {
+                                'config sync'
+                        }
+                } else {
+                        'no config'
+                }
+        })
+        
         
 # Allergy specific output fields ==========================
         output$plot <- renderPlot({
@@ -276,6 +306,15 @@ shinyServer(function(input, output, session) {
                 data <- allAllergyData()
                 paste('<strong>Datensätze:</strong>',
                       nrow(data))
+        })
+        
+        output$pollination_status <- renderText({
+                retVal <- pollinationStatus()
+                paste('<strong>Status:</strong>',
+                      switch(retVal,
+                             'no config' = 'automatische Datensammlung noch nicht konfiguriert',
+                             'update config' = 'Konfiguration der Datensammlung aktualisiert',
+                             'config sync' = 'automatische Datensammlung wird durchgeführt'))
         })
 
 # Email reminders =========================================        

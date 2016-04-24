@@ -109,7 +109,9 @@ shinyUI(fluidPage(
                                                                         'Beifuß (Artemisia)',
                                                                         'Ragweed (Ambrosia)'),
                                                          selected = 'auswählen...'),
-                                                textInput('plz', 'PLZ:')
+                                                textInput('plz', 'PLZ:'),
+                                                htmlOutput('pollination_status')
+                                             
                                         ),
 
 # Scheduler ===============================================
