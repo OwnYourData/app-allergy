@@ -39,6 +39,7 @@ library(dplyr)
 source("oyd_helpers.R")
 
 first <- TRUE
+script_pollenwarndienst <- "library(XML); suppressPackageStartupMessages(library(RCurl)); url<-'https://www.pollenwarndienst.at/de/aktuelle-werte.html?zip=[PLZ]&maincity=10&tabber=2'; data<-getURL(url,ssl.verifypeer=0L, followlocation=1L); page<-htmlTreeParse(data, useInternal=TRUE); value<-xpathSApply(page,\"/html/body/div[@id='wrapper']/div[@id='content']/div[@id='content_left']/div[@id='c3']/div[@id='charts_container']/div[@id='tabber_contamination']/div[@class='chart_content contamination ']/div[@class='contamination_row']/div[contains(text(), '[allergy]')]/following::div[1]\", xmlValue)[1]; if (is.null(value) | value=='') value <- '0'; result <- utf8ToInt(value);"
 
 # Shiny Server ============================================
 shinyServer(function(input, output, session) {
@@ -234,6 +235,14 @@ shinyServer(function(input, output, session) {
                 paste('<strong>zuletzt aktualisiert:</strong>',
                       format(Sys.time(), '%H:%M:%S'))
         })
+
+        setPollConfig <- function(allergy, plz){
+                updateSelectInput(session, 'allergy',
+                                  selected=allergy)
+                updateTextInput(session, 'plz',
+                                value=plz)
+                
+        }       
         
         getPiaPollConfig <- function(repo){
                 url <- itemsUrl(repo[['url']], 
@@ -244,28 +253,75 @@ shinyServer(function(input, output, session) {
                    nrow(retVal) == 0) {
                         vector()
                 } else {
-                        retVal
+                        list(id=retVal$id,
+                             allergy=retVal$parameters$replace$allergy,
+                             plz=retVal$parameters$replace$PLZ)
                 }
         }
 
+        writePollConfig <- function(repo, pollConfig){
+                replace = list(PLZ=pollConfig[['plz']], 
+                               allergy=pollConfig[['allergy']])
+                r_script <- toString(base64Encode(script_pollenwarndienst))
+                parameters <- list(
+                        Rscript_base64=r_script,
+                        replace=replace,
+                        repo_url = repo[['url']],
+                        repo_key = repo[['app_key']],
+                        repo_secret = repo[['app_secret']])
+                config <- list(repo=repo[['app_key']],
+                               time='0 18 * * *',
+                               task='Rscript',
+                               parameters=parameters)
+                if(is.null(pollConfig[['id']])) {
+                        writeRecord(repo,
+                                    itemsUrl(repo[['url']], schedulerKey()), 
+                                    config)
+                } else {
+                        updateRecord(repo,
+                                     itemsUrl(repo[['url']], schedulerKey()),
+                                     config,
+                                     pollConfig[['id']])
+                }
+        }
+        
         pollinationStatus <- reactive({
                 repo <- allergyRepo()
                 pollConfig <- getPiaPollConfig(repo)
+                localAllergy <- input$allergy
+                localPlz <- input$plz
                 if (length(pollConfig) > 0) {
                         piaAllergy <- pollConfig[['allergy']]
                         piaPlz <-  pollConfig[['plz']]
-                        if((piaAllergy != input$allergy) |
-                           (piaPlz != input$plz)) {
-                                'update config'
+                        if((piaAllergy == localAllergy) &
+                           (piaPlz == localPlz)) {
+                                'config in sync'
                         } else {
-                                'config sync'
+                                if (((nchar(localAllergy) == 0) | (localAllergy == 'auswählen...')) &
+                                    ((nchar(localPlz) == 0) | (localPlz == ''))) {
+                                        setPollConfig(piaAllergy, piaPlz)
+                                        'config read'
+                                } else {
+                                        pollConfig <- list(allergy=localAllergy,
+                                                           plz=localPlz,
+                                                           id=pollConfig[['id']])
+                                        writePollConfig(repo, pollConfig)
+                                        'config updated'
+                                }
                         }
                 } else {
-                        'no config'
+                        if (((nchar(localAllergy) > 0) | (localAllergy == 'auswählen...')) &
+                            ((nchar(localPlz) > 0) | (localPlz == ''))) {
+                                pollConfig <- list(allergy=localAllergy,
+                                                   plz=localPlz)
+                                writePollConfig(repo, pollConfig)
+                                'config created'
+                        } else {
+                                'no config'       
+                        }
                 }
         })
-        
-        
+
 # Allergy specific output fields ==========================
         output$plot <- renderPlot({
                 input$exportButton
@@ -312,9 +368,11 @@ shinyServer(function(input, output, session) {
                 retVal <- pollinationStatus()
                 paste('<strong>Status:</strong>',
                       switch(retVal,
-                             'no config' = 'automatische Datensammlung noch nicht konfiguriert',
-                             'update config' = 'Konfiguration der Datensammlung aktualisiert',
-                             'config sync' = 'automatische Datensammlung wird durchgeführt'))
+                             'no config'      = 'automatische Datensammlung noch nicht konfiguriert',
+                             'config read'    = 'automatische Datensammlung aus PIA gelesen',
+                             'config created' = 'automatische Datensammlung erfolgreich konfiguriert',
+                             'config updated' = 'Konfiguration der Datensammlung aktualisiert',
+                             'config in sync' = 'automatische Datensammlung wird durchgeführt'))
         })
 
 # Email reminders =========================================        
@@ -376,13 +434,13 @@ shinyServer(function(input, output, session) {
                 piaSchedulerEmail <- getPiaSchedulerEmail(repo)
                 piaEmail <- ''
                 piaEmailId <- NA
-                if (length(piaSchedulerEmail) > 0) {
-                        piaEmail <- piaSchedulerEmail[['email']]
-                        piaEmailId <-  piaSchedulerEmail[['id']]
-                }
                 if (length(piaMailConfig) == 0) {
                         'no mail config'
                 } else {
+                        if (length(piaSchedulerEmail) > 0) {
+                                piaEmail <- piaSchedulerEmail[['email']]
+                                piaEmailId <-  piaSchedulerEmail[['id']]
+                        }
                         localEmail <- as.character(input$email)
                         if(validEmail(localEmail)) {
                                 if (localEmail == piaEmail) {
