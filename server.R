@@ -27,6 +27,7 @@ encode with https://www.base64encode.org/
                        "eu.ownyourdata.scheduler.email_config:update",
                        "eu.ownyourdata.scheduler.email_config:delete"]
 }
+ew0KICAgICAgICAibmFtZSI6IkFsbGVyZ3kgQXBwIiwNCiAgICAgICAgImlkZW50aWZpZXIiOiJldS5vd255b3VyZGF0YS5hbGxlcmd5IiwNCiAgICAgICAgInR5cGUiOiJleHRlcm5hbCIsDQogICAgICAgICJkZXNjcmlwdGlvbiI6InRyYWNrIHlvdXIgYWxsZXJneSAocG9sbGluYXRpb24sIG1vb2QsIG1lZGljaW5lIGludGFrZSkiLA0KICAgICAgICAicGVybWlzc2lvbnMiOlsiZXUub3dueW91cmRhdGEuYWxsZXJneS5wb2xsaW5hdGlvbjpyZWFkIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kucG9sbGluYXRpb246d3JpdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5wb2xsaW5hdGlvbjp1cGRhdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5wb2xsaW5hdGlvbjpkZWxldGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5jb25kaXRpb246cmVhZCIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5hbGxlcmd5LmNvbmRpdGlvbjp3cml0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5hbGxlcmd5LmNvbmRpdGlvbjp1cGRhdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5jb25kaXRpb246ZGVsZXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kubWVkaW50YWtlOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5tZWRpbnRha2U6d3JpdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5tZWRpbnRha2U6dXBkYXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kubWVkaW50YWtlOmRlbGV0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXI6cmVhZCIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXI6d3JpdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOnVwZGF0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXI6ZGVsZXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLnNjaGVkdWxlci5lbWFpbF9jb25maWc6cmVhZCIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOndyaXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLnNjaGVkdWxlci5lbWFpbF9jb25maWc6dXBkYXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLnNjaGVkdWxlci5lbWFpbF9jb25maWc6ZGVsZXRlIl0NCn0NCg==
 '
 
 # Setup and config ========================================
@@ -39,7 +40,8 @@ library(dplyr)
 source("oyd_helpers.R")
 
 first <- TRUE
-script_pollenwarndienst <- "library(XML); suppressPackageStartupMessages(library(RCurl)); url<-'https://www.pollenwarndienst.at/de/aktuelle-werte.html?zip=[PLZ]&maincity=10&tabber=2'; data<-getURL(url,ssl.verifypeer=0L, followlocation=1L); page<-htmlTreeParse(data, useInternal=TRUE); value<-xpathSApply(page,\"/html/body/div[@id='wrapper']/div[@id='content']/div[@id='content_left']/div[@id='c3']/div[@id='charts_container']/div[@id='tabber_contamination']/div[@class='chart_content contamination ']/div[@class='contamination_row']/div[contains(text(), '[allergy]')]/following::div[1]\", xmlValue)[1]; if (is.null(value) | value=='') value <- '0'; result <- utf8ToInt(value);"
+# library(XML); suppressPackageStartupMessages(library(RCurl)); url<-'https://www.pollenwarndienst.at/de/aktuelle-werte.html?zip=[PLZ]&maincity=10&tabber=2'; data<-getURL(url,ssl.verifypeer=0L, followlocation=1L); page<-htmlTreeParse(data, useInternal=TRUE); value<-xpathSApply(page,"/html/body/div[@id='wrapper']/div[@id='content']/div[@id='content_left']/div[@id='c3']/div[@id='charts_container']/div[@id='tabber_contamination']/div[@class='chart_content contamination ']/div[@class='contamination_row']/div[contains(text(), '[allergy]')]/following::div[1]", xmlValue)[1]; if (is.null(value) | value=='') value <- '0'; result <- utf8ToInt(value);
+script_pollenwarndienst <- "bGlicmFyeShYTUwpOyBzdXBwcmVzc1BhY2thZ2VTdGFydHVwTWVzc2FnZXMobGlicmFyeShSQ3VybCkpOyB1cmw8LSdodHRwczovL3d3dy5wb2xsZW53YXJuZGllbnN0LmF0L2RlL2FrdHVlbGxlLXdlcnRlLmh0bWw/emlwPVtQTFpdJm1haW5jaXR5PTEwJnRhYmJlcj0yJzsgZGF0YTwtZ2V0VVJMKHVybCxzc2wudmVyaWZ5cGVlcj0wTCwgZm9sbG93bG9jYXRpb249MUwpOyBwYWdlPC1odG1sVHJlZVBhcnNlKGRhdGEsIHVzZUludGVybmFsPVRSVUUpOyB2YWx1ZTwteHBhdGhTQXBwbHkocGFnZSwiL2h0bWwvYm9keS9kaXZbQGlkPSd3cmFwcGVyJ10vZGl2W0BpZD0nY29udGVudCddL2RpdltAaWQ9J2NvbnRlbnRfbGVmdCddL2RpdltAaWQ9J2MzJ10vZGl2W0BpZD0nY2hhcnRzX2NvbnRhaW5lciddL2RpdltAaWQ9J3RhYmJlcl9jb250YW1pbmF0aW9uJ10vZGl2W0BjbGFzcz0nY2hhcnRfY29udGVudCBjb250YW1pbmF0aW9uICddL2RpdltAY2xhc3M9J2NvbnRhbWluYXRpb25fcm93J10vZGl2W2NvbnRhaW5zKHRleHQoKSwgJ1thbGxlcmd5XScpXS9mb2xsb3dpbmc6OmRpdlsxXSIsIHhtbFZhbHVlKVsxXTsgaWYgKGlzLm51bGwodmFsdWUpIHwgdmFsdWU9PScnKSB2YWx1ZSA8LSAnMCc7IHJlc3VsdCA8LSB1dGY4VG9JbnQodmFsdWUpOw=="
 
 # Shiny Server ============================================
 shinyServer(function(input, output, session) {
@@ -248,21 +250,23 @@ shinyServer(function(input, output, session) {
                 url <- itemsUrl(repo[['url']], 
                                 schedulerKey())
                 retVal <- readItems(repo, url)
-                retVal <- retVal[retVal$repo == repo[['app_key']], ]
-                if(length(retVal) == 0 | 
-                   nrow(retVal) == 0) {
-                        vector()
-                } else {
+                retVal <- retVal[retVal$repo == repo[['app_key']] & 
+                                 retVal$task == 'Rscript', ]
+                if(length(retVal) > 0 & 
+                   nrow(retVal) > 0) {
                         list(id=retVal$id,
                              allergy=retVal$parameters$replace$allergy,
                              plz=retVal$parameters$replace$PLZ)
+                } else {
+                        vector()
                 }
         }
 
         writePollConfig <- function(repo, pollConfig){
                 replace = list(PLZ=pollConfig[['plz']], 
                                allergy=pollConfig[['allergy']])
-                r_script <- toString(base64Encode(script_pollenwarndienst))
+#                r_script <- toString(base64Encode(script_pollenwarndienst))
+                r_script <- toString(script_pollenwarndienst)
                 parameters <- list(
                         Rscript_base64=r_script,
                         replace=replace,
@@ -270,7 +274,7 @@ shinyServer(function(input, output, session) {
                         repo_key = repo[['app_key']],
                         repo_secret = repo[['app_secret']])
                 config <- list(repo=repo[['app_key']],
-                               time='0 18 * * *',
+                               time='0 9 * * *',
                                task='Rscript',
                                parameters=parameters)
                 if(is.null(pollConfig[['id']])) {
@@ -310,14 +314,14 @@ shinyServer(function(input, output, session) {
                                 }
                         }
                 } else {
-                        if (((nchar(localAllergy) > 0) | (localAllergy == 'auswählen...')) &
-                            ((nchar(localPlz) > 0) | (localPlz == ''))) {
+                        if ((localAllergy == 'auswählen...') | 
+                            (localPlz == '')) {
+                                'no config'
+                        } else {
                                 pollConfig <- list(allergy=localAllergy,
                                                    plz=localPlz)
                                 writePollConfig(repo, pollConfig)
                                 'config created'
-                        } else {
-                                'no config'       
                         }
                 }
         })
