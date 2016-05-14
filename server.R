@@ -42,6 +42,10 @@ source("oyd_helpers.R")
 first <- TRUE
 # library(XML); suppressPackageStartupMessages(library(RCurl)); url<-'https://www.pollenwarndienst.at/de/aktuelle-werte.html?zip=[PLZ]&maincity=10&tabber=2'; data<-getURL(url,ssl.verifypeer=0L, followlocation=1L); page<-htmlTreeParse(data, useInternal=TRUE); value<-xpathSApply(page,"/html/body/div[@id='wrapper']/div[@id='content']/div[@id='content_left']/div[@id='c3']/div[@id='charts_container']/div[@id='tabber_contamination']/div[@class='chart_content contamination ']/div[@class='contamination_row']/div[contains(text(), '[allergy]')]/following::div[1]", xmlValue)[1]; if (is.null(value) | value=='') value <- '0'; result <- utf8ToInt(value);
 script_pollenwarndienst <- "bGlicmFyeShYTUwpOyBzdXBwcmVzc1BhY2thZ2VTdGFydHVwTWVzc2FnZXMobGlicmFyeShSQ3VybCkpOyB1cmw8LSdodHRwczovL3d3dy5wb2xsZW53YXJuZGllbnN0LmF0L2RlL2FrdHVlbGxlLXdlcnRlLmh0bWw/emlwPVtQTFpdJm1haW5jaXR5PTEwJnRhYmJlcj0yJzsgZGF0YTwtZ2V0VVJMKHVybCxzc2wudmVyaWZ5cGVlcj0wTCwgZm9sbG93bG9jYXRpb249MUwpOyBwYWdlPC1odG1sVHJlZVBhcnNlKGRhdGEsIHVzZUludGVybmFsPVRSVUUpOyB2YWx1ZTwteHBhdGhTQXBwbHkocGFnZSwiL2h0bWwvYm9keS9kaXZbQGlkPSd3cmFwcGVyJ10vZGl2W0BpZD0nY29udGVudCddL2RpdltAaWQ9J2NvbnRlbnRfbGVmdCddL2RpdltAaWQ9J2MzJ10vZGl2W0BpZD0nY2hhcnRzX2NvbnRhaW5lciddL2RpdltAaWQ9J3RhYmJlcl9jb250YW1pbmF0aW9uJ10vZGl2W0BjbGFzcz0nY2hhcnRfY29udGVudCBjb250YW1pbmF0aW9uICddL2RpdltAY2xhc3M9J2NvbnRhbWluYXRpb25fcm93J10vZGl2W2NvbnRhaW5zKHRleHQoKSwgJ1thbGxlcmd5XScpXS9mb2xsb3dpbmc6OmRpdlsxXSIsIHhtbFZhbHVlKVsxXTsgaWYgKGlzLm51bGwodmFsdWUpIHwgdmFsdWU9PScnKSB2YWx1ZSA8LSAnMCc7IHJlc3VsdCA8LSB1dGY4VG9JbnQodmFsdWUpOw=="
+repo_allergy <- 'eu.ownyourdata.allergy'
+repo_condition <- paste0(repo_allergy, '.condition')
+repo_medintake <- paste0(repo_allergy, '.medintake')
+repo_pollination <- paste0(repo_allergy, '.pollination')
 
 # Shiny Server ============================================
 shinyServer(function(input, output, session) {
@@ -93,9 +97,11 @@ shinyServer(function(input, output, session) {
                 m_data <- data.frame()
                 c_data <- data.frame()
                 data <- allergyData('pollination')
+                colnames(data) <- c('date', 'pollType', 'pollPlz', 'id', 'pollination')
                 p_data <- data
                 if(nrow(data) > 0) {
                         dataCondition <- allergyData('condition')
+                        colnames(dataCondition) <- c('date', 'id', 'condition')
                         c_data <- dataCondition
                         if(nrow(dataCondition) > 0) {
                                 data <- merge(data[, !names(data) %in% c('id')], 
@@ -104,10 +110,12 @@ shinyServer(function(input, output, session) {
                         }
                 } else {
                         data <- allergyData('condition')
+                        colnames(data) <- c('date', 'id', 'condition')
                         c_data <- data
                 }
                 if(nrow(data) > 0) {
                         dataMedintake <- allergyData('medintake')
+                        colnames(dataMedintake) <- c('date', 'id', 'medintake')
                         m_data <- dataMedintake
                         if(nrow(dataMedintake) > 0) {
                                 data <- merge(data[, !names(data) %in% c('id')], 
@@ -116,6 +124,7 @@ shinyServer(function(input, output, session) {
                         }
                 } else {
                         data <- allergyData('medintake')
+                        colnames(data) <- c('date', 'id', 'medintake')
                         data <- data[, !names(data) %in% c('id')]
                         m_data <- data
                 }
@@ -162,7 +171,7 @@ shinyServer(function(input, output, session) {
                              type='b', pch=16, axes=FALSE,
                              ylim=c(1,10), xlim=c(mymin, mymax),
                              main='eigene & gemessene Pollenbelastung',
-                             xlab='', ylab='eigene Pollenbelastung')
+                             xlab='', ylab='eigenes Befinden')
                         
                         axis(2, col='black',col.axis='black',las=1)
                         legend("bottom", inset=c(0,-0.4), -1, "Tage mit Antiallergika Einnahme",
@@ -185,12 +194,14 @@ shinyServer(function(input, output, session) {
                 if(input$usePollination) {
                         pollination <- input$manPollination
                         pollType <- input$manAllergy
+                        pollPlz <- input$manPlz
                         piaData <- allergyData('pollination')
                         existData <- piaData[piaData$date == date &
                                              piaData$pollType == pollType, ]
                         data <- list(date=date, 
-                                     pollination=pollination, 
-                                     pollType=pollType)
+                                     value=pollination, 
+                                     pollType=pollType,
+                                     pollPlz=pollPlz)
                         url <- itemsUrl(repo[['url']], 
                                         paste0(repo[['app_key']], ".pollination"))
                         if (nrow(existData) > 0) {
@@ -205,7 +216,8 @@ shinyServer(function(input, output, session) {
                         condition   <- input$manCondition
                         piaData <- allergyData('condition')
                         existData <- piaData[piaData$date == date, ]
-                        data <- list(date=date, condition=condition)
+                        data <- list(date=date, 
+                                     value=condition)
                         url <- itemsUrl(repo[['url']], 
                                         paste0(repo[['app_key']], ".condition"))
                         if (nrow(existData) > 0) {
@@ -221,9 +233,11 @@ shinyServer(function(input, output, session) {
                         piaData <- allergyData('medintake')
                         existData <- piaData[piaData$date == date, ]
                         if(medintake == 1) {
-                                data <- list(date=date, medintake=1)
+                                data <- list(date=date, 
+                                             value=TRUE)
                         } else {
-                                data <- list(date=date, medintake=NA)
+                                data <- list(date=date, 
+                                             medintake=FALSE)
                         }
                         url <- itemsUrl(repo[['url']], 
                                         paste0(repo[['app_key']], ".medintake"))
@@ -267,12 +281,26 @@ shinyServer(function(input, output, session) {
                                allergy=pollConfig[['allergy']])
 #                r_script <- toString(base64Encode(script_pollenwarndienst))
                 r_script <- toString(script_pollenwarndienst)
+                pollConfig_fields <- list(
+                        date='Date.now',
+                        value='Rscript.result(integer)',
+                        pollType=pollConfig[['allergy']],
+                        pollPlz=pollConfig[['plz']]
+                )
+                pollConfig_structure <- list(
+                        repo=repo_pollination,
+                        fields=pollConfig_fields
+                )
+                response_structure <- list(
+                        pollConfig_structure
+                )
                 parameters <- list(
                         Rscript_base64=r_script,
                         replace=replace,
                         repo_url = repo[['url']],
                         repo_key = repo[['app_key']],
-                        repo_secret = repo[['app_secret']])
+                        repo_secret = repo[['app_secret']],
+                        response_structure=response_structure)
                 config <- list(repo=repo[['app_key']],
                                time='0 9 * * *',
                                task='Rscript',
@@ -433,6 +461,11 @@ shinyServer(function(input, output, session) {
         }
         
         emailReminderStatus <- reactive({
+                input$mailer_address
+                input$mailer_port
+                input$mailer_user
+                input$mailer_password
+                
                 repo <- allergyRepo()
                 piaMailConfig <- getPiaEmailConfig(repo)
                 piaSchedulerEmail <- getPiaSchedulerEmail(repo)
@@ -450,12 +483,33 @@ shinyServer(function(input, output, session) {
                                 if (localEmail == piaEmail) {
                                         'email in sync'
                                 } else {
+                                        condition_fields <- list(
+                                                date='Date.now',
+                                                value='line_1(Integer)'
+                                        )
+                                        condition_structure <- list(
+                                                repo=repo_condition,
+                                                fields=condition_fields
+                                        )
+                                        medintake_fields <- list(
+                                                date='Date.now',
+                                                value='line_2[FALSE](Boolean)'
+                                        )
+                                        medintake_structure <- list(
+                                                repo=repo_medintake,
+                                                fields=medintake_fields
+                                        )
+                                        response_structure <- list(
+                                                condition_structure,
+                                                medintake_structure
+                                        )
                                         if (piaEmail == '') {
                                                 writeSchedulerEmail(
                                                         repo,
                                                         localEmail,
                                                         'note data for your condition and medicine intake',
-                                                        '0 18 * * *')
+                                                        '0 18 * * *',
+                                                        response_structure)
                                                 'email saved'
                                         } else {
                                                 updateSchedulerEmail(
@@ -463,6 +517,7 @@ shinyServer(function(input, output, session) {
                                                         localEmail,
                                                         'note data for your condition and medicine intake',
                                                         '0 18 * * *',
+                                                        response_structure,
                                                         piaEmailId)
                                                 'email updated'
                                         }
@@ -498,7 +553,7 @@ shinyServer(function(input, output, session) {
                 retVal <- emailReminderStatus()
                 paste('<strong>Status:</strong>',
                       switch(retVal,
-                             'no mail config' = 'Email-Konfiguration noch nicht vorhanden',
+                             'no mail config' = 'Emailkonfiguration noch nicht vorhanden',
                              'missing email'  = 'fehlende Emailadresse',
                              'invalid email'  = 'ungültige Emailadresse',
                              'email loaded'   = 'Emailadresse aus PIA geladen',

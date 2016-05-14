@@ -55,6 +55,7 @@ shinyUI(fluidPage(
                                                                         'Beifuß (Artemisia)',
                                                                         'Ragweed (Ambrosia)'),
                                                          selected = 'auswählen...'),
+                                             textInput('manPlz', 'PLZ:'),
                                              sliderInput('manPollination', NULL, value=0, min=0, max=4),
                                              helpText('Skala: 0 (keine) bis 4 (hohe Belastung)'),
                                              div(style='display:inline-block', checkboxInput('useCondition', label = NULL, value = TRUE)),
