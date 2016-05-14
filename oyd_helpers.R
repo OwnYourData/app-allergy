@@ -237,7 +237,6 @@ updateSchedulerEmail <- function(repo, email, content, time, response_structure,
                                email_response = TRUE,
                                parameters=parameters)
         }
-save(config, file="tmpUpdateConfig.RData")
         updateRecord(repo, 
                      itemsUrl(repo[['url']], schedulerKey()), 
                      config,
