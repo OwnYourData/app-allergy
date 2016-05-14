@@ -105,7 +105,7 @@ writeRecord <- function(repo, url, record) {
 updateRecord <- function(repo, url, record, id) {
         headers <- defaultHeaders(repo[['token']])
         record$id <- as.numeric(id)
-        data <- gsub("\\[|\\]", '', 
+        data <- gsub("^\\[|\\]$", '', 
                      toJSON(record, auto_unbox = TRUE))
         response <- tryCatch(
                 postForm(url,
@@ -237,6 +237,7 @@ updateSchedulerEmail <- function(repo, email, content, time, response_structure,
                                email_response = TRUE,
                                parameters=parameters)
         }
+save(config, file="tmpUpdateConfig.RData")
         updateRecord(repo, 
                      itemsUrl(repo[['url']], schedulerKey()), 
                      config,
