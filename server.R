@@ -1,4 +1,4 @@
-# OYD: Kontoentwicklung  - last update:2016-05-20
+# OYD: Allergie-Tagebuch  - last update:2016-05-20
 # Manifest for allergy app ================================
 '
 encode with https://www.base64encode.org/
@@ -101,9 +101,9 @@ shinyServer(function(input, output, session) {
                 m_data <- data.frame()
                 c_data <- data.frame()
                 data <- allergyData('pollination')
-                colnames(data) <- c('date', 'pollType', 'pollPlz', 'id', 'pollination')
-                p_data <- data
                 if(nrow(data) > 0) {
+                        colnames(data) <- c('date', 'pollType', 'pollPlz', 'id', 'pollination')
+                        p_data <- data
                         dataCondition <- allergyData('condition')
                         colnames(dataCondition) <- c('date', 'id', 'condition')
                         c_data <- dataCondition
@@ -114,8 +114,12 @@ shinyServer(function(input, output, session) {
                         }
                 } else {
                         data <- allergyData('condition')
-                        colnames(data) <- c('date', 'id', 'condition')
-                        c_data <- data
+                        if(nrow(data) > 0){
+                                colnames(data) <- c('date', 'id', 'condition')
+                                c_data <- data
+                        } else {
+                                data <- data.frame()
+                        }
                 }
                 if(nrow(data) > 0) {
                         dataMedintake <- allergyData('medintake')
@@ -128,9 +132,13 @@ shinyServer(function(input, output, session) {
                         }
                 } else {
                         data <- allergyData('medintake')
-                        colnames(data) <- c('date', 'id', 'medintake')
-                        data <- data[, !names(data) %in% c('id')]
-                        m_data <- data
+                        if(nrow(data) > 0){
+                                colnames(data) <- c('date', 'id', 'medintake')
+                                data <- data[, !names(data) %in% c('id')]
+                                m_data <- data
+                        } else {
+                                data <- data.frame()
+                        }
                 }
                 data
         }
@@ -362,10 +370,7 @@ shinyServer(function(input, output, session) {
         output$plot <- renderPlot({
                 input$exportButton
                 if(first) {
-                        createAlert(session, 'topAlert', style='danger', title='Sie befinden sich auf einer unsicheren Webseite!',
-                                    content="Die auf dieser Webseite eingegebenen und hochgeladenden Daten können möglicherweise durch Unberechtigte mitgelesen werden - <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>weitere Infos</a>.<br><strong>Lösung:</strong> <a href='https://www.ownyourdata.eu/apps/kontodaten-visualisierung-app/'>Installieren</a> sie die <em>Kontoauszüge App</em> an einem sicheren Ort ihrer Wahl!", append=FALSE)
-                        createAlert(session, 'noPIA', 'noPIAAlert', style='warning', title='Keine Verbindung zu einer PIA',
-                                    content="Die eingegebenen Daten werden nicht gespeichert und es kann später nicht mehr darauf zugegriffen werden. Geben sie links unter 'PIA' die Zugriffsdaten ein.", append=FALSE)
+                        internetAlert(session, 'https://www.ownyourdata.eu/apps/')
                         first <<- FALSE                  
                 }
                 repo <- allergyRepo()
