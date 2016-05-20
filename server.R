@@ -125,6 +125,8 @@ shinyServer(function(input, output, session) {
                         dataMedintake <- allergyData('medintake')
                         colnames(dataMedintake) <- c('date', 'id', 'medintake')
                         m_data <- dataMedintake
+                        m_data[tolower(m_data$medintake) == 'false', 'medintake'] <- FALSE
+                        m_data[tolower(m_data$medintake) == 'true', 'medintake'] <- TRUE
                         if(nrow(dataMedintake) > 0) {
                                 data <- merge(data[, !names(data) %in% c('id')], 
                                               dataMedintake[, !names(dataMedintake) %in% c('id')],
@@ -154,10 +156,11 @@ shinyServer(function(input, output, session) {
                 if(nrow(data) > 0) {
                         closeAlert(session, 'noDataAlert')
                         data <- data[with(data, order(date)),]
-                        
+                        save(data, file='tmpData.RData')
                         # draw graphic
                         par(mar=c(5, 4, 4, 6) + 0.1)
-                        plot(x=data$date, y=data$medintake,
+                        m_data <- data[data$medintake, ]
+                        plot(x=m_data$date, y=as.integer(m_data$medintake),
                              type='h', col='red', lwd=10, 
                              ylim=c(0,1), xlim=c(mymin, mymax),
                              axes=FALSE, xlab='', ylab='')

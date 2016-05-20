@@ -318,3 +318,20 @@ validEmail <- function(email){
                 FALSE
         }
 }
+
+combineData <- function(dat1, dat2){
+        data <- data.frame()
+        if(nrow(dat1) == 0) {
+                data <- dat2
+        } else {
+                if(nrow(dat2) == 0){
+                        data <- dat1
+                } else {
+                        data <- merge(dat1[, !names(dat1) %in% c('id')], 
+                                      dat2[, !names(dat2) %in% c('id')],
+                                      by='date', all=TRUE)
+                }
+        }
+        data
+}
+
