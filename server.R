@@ -1,3 +1,4 @@
+# OYD: Kontoentwicklung  - last update:2016-05-20
 # Manifest for allergy app ================================
 '
 encode with https://www.base64encode.org/
@@ -49,7 +50,10 @@ repo_pollination <- paste0(repo_allergy, '.pollination')
 
 # Shiny Server ============================================
 shinyServer(function(input, output, session) {
-
+        output$upgradeLink <- renderText({
+                renderUpgrade(session)
+        })
+        
 # Allergy specific functions ==============================
         allergyRepo <- reactive({
                 url <- input$allergy_url
@@ -461,11 +465,6 @@ shinyServer(function(input, output, session) {
         }
         
         emailReminderStatus <- reactive({
-                input$mailer_address
-                input$mailer_port
-                input$mailer_user
-                input$mailer_password
-                
                 repo <- allergyRepo()
                 piaMailConfig <- getPiaEmailConfig(repo)
                 piaSchedulerEmail <- getPiaSchedulerEmail(repo)
