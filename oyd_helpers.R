@@ -66,8 +66,8 @@ renderUpgrade <- function(session){
 }
 
 internetAlert <- function(session, appUrl){
-        createAlert(session, 'topAlert', style='danger', title='Sie befinden sich auf einer unsicheren Webseite!',
-                    content=paste0("Die auf dieser Webseite eingegebenen und hochgeladenden Daten können möglicherweise durch Unberechtigte mitgelesen werden - <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>weitere Infos</a>.<br><strong>Lösung:</strong> <a href='", appUrl, "'>Installiere</a> die App an einem sicheren Ort!"), append=FALSE)
+        createAlert(session, 'topAlert', style='warning', title='Daten sicher speichern',
+                    content=paste0("Vergewissere dich, dass deine Daten an einem sicheren Ort gespeichert sind. (siehe <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>Datenschutz in verschiedenen Ländern</a>)<br><strong>Unser Vorschlag:</strong> Speichere deine Daten selbst! (<a href='", appUrl, "'>hier geht's zu unserem Shop</a>)"), append=FALSE)
         
 }
 
@@ -127,6 +127,15 @@ updateRecord <- function(repo, url, record, id) {
                 postForm(url,
                          .opts=list(httpheader = headers,
                                     postfields = data)),
+                error = function(e) { return(NA) })
+        response
+}
+
+deleteRecord <- function(repo, url, id){
+        headers <- defaultHeaders(repo[['token']])
+        url <- paste0(url, '/', id)
+        response <- tryCatch(
+                DELETE(url, add_headers(headers)),
                 error = function(e) { return(NA) })
         response
 }

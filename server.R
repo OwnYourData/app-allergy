@@ -156,7 +156,6 @@ shinyServer(function(input, output, session) {
                 if(nrow(data) > 0) {
                         closeAlert(session, 'noDataAlert')
                         data <- data[with(data, order(date)),]
-                        save(data, file='tmpData.RData')
                         # draw graphic
                         par(mar=c(5, 4, 4, 6) + 0.1)
                         m_data <- data[data$medintake, ]
