@@ -211,11 +211,14 @@ setSchedulerEmail <- function(session, email){
                         value=email)
 }
 
-writeSchedulerEmail <- function(repo, email, content, time, response_structure){
+writeSchedulerEmail <- function(repo, email, content, time, response_structure, parameters_structure){
         if(missing(response_structure)) {
                 parameters <- list(address=email,
                                    content=content,
                                    encrypt='false')
+                if(!missing(parameters_structure)){
+                        parameters <- merge(parameters, parameters_structure)
+                }
                 config <- list(repo=repo[['app_key']],
                                time=time,
                                task='email',
@@ -228,6 +231,9 @@ writeSchedulerEmail <- function(repo, email, content, time, response_structure){
                                    repo_key=repo[['app_key']],
                                    repo_secret=repo[['app_secret']],
                                    encrypt='false')
+                if(!missing(parameters_structure)){
+                        parameters <- merge(parameters, parameters_structure)
+                }
                 config <- list(repo=repo[['app_key']],
                                time=time,
                                task='email',
@@ -239,11 +245,14 @@ writeSchedulerEmail <- function(repo, email, content, time, response_structure){
                     config)
 }
 
-updateSchedulerEmail <- function(repo, email, content, time, response_structure, id){
+updateSchedulerEmail <- function(repo, email, content, time, response_structure, parameters_structure, id){
         if(missing(response_structure)) {
                 parameters <- list(address=email,
                                    content=content,
                                    encrypt='false')
+                if(!missing(parameters_structure)){
+                        parameters <- merge(parameters, parameters_structure)
+                }
                 config <- list(repo=repo[['app_key']],
                                time=time,
                                task='email',
@@ -256,6 +265,9 @@ updateSchedulerEmail <- function(repo, email, content, time, response_structure,
                                    repo_key=repo[['app_key']],
                                    repo_secret=repo[['app_secret']],
                                    encrypt='false')
+                if(!missing(parameters_structure)){
+                        parameters <- merge(parameters, parameters_structure)
+                }
                 config <- list(repo=repo[['app_key']],
                                time=time,
                                task='email',
