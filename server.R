@@ -168,7 +168,7 @@ shinyServer(function(input, output, session) {
                         closeAlert(session, 'noDataAlert')
                         data <- data[with(data, order(date)),]
                         # draw graphic
-                        par(mar=c(5, 4, 6.5, 6) + 0.1)
+                        par(mar=c(8, 4, 2, 4) + 0.1)
                         m_data <- data[data$medintake, ]
                         plot(x=m_data$date, y=as.integer(m_data$medintake),
                              type='h', col='red', lwd=10, 

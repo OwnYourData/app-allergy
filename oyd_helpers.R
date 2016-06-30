@@ -67,7 +67,7 @@ renderUpgrade <- function(session){
 
 internetAlert <- function(session, appUrl){
         createAlert(session, 'topAlert', style='warning', title='Daten sicher speichern',
-                    content=paste0("Vergewissere dich, dass deine Daten an einem sicheren Ort gespeichert sind. (siehe <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>Datenschutz in verschiedenen Ländern</a>)<br><strong>Unser Vorschlag:</strong> Speichere deine Daten selbst! (<a href='", appUrl, "'>hier geht's zu unserem Shop</a>)"), append=FALSE)
+                    content=paste0("Vergewissere dich, dass deine Daten an einem sicheren Ort gespeichert sind. (siehe <a href='https://www.ownyourdata.eu/2016/05/31/whitepaper-in-welchem-land-sind-meine-daten-am-sichersten/'>Datenschutz in verschiedenen Ländern</a>)<br><strong>Unser Vorschlag:</strong> Speichere deine Daten selbst! (<a href='", appUrl, "'>hier geht's zu unserem Shop</a>)"), append=FALSE)
         
 }
 

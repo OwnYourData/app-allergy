@@ -26,7 +26,7 @@ shinyUI(navbarPage(HTML(paste0('<a href=',shQuote(saved_url), '>', '<img height=
                                                             separator = ' bis ',
                                                             format = 'dd.mm.yyyy',
                                                             label = 'Zeitfenster',
-                                                            start = Sys.Date() - 30, end = Sys.Date()),
+                                                            start = Sys.Date()-14, end = Sys.Date()+2),
                                              hr(),
                                              h3('Daten eingeben'),
                                              dateInput('manDate',
