@@ -6,7 +6,19 @@
 ###########################################################
 # Update this line with the R packages to install:
 
-my_packages = c('shiny', 'shinyBS', 'DT', 'tidyr', 'digest', 'RCurl', 'jsonlite', 'dplyr')
+my_packages = c('shiny', 
+                'shinyBS', 
+                'devtools',
+                'RCurl', 
+                'httr',
+                'jsonlite', 
+                'rjson',
+                'dplyr',
+                'tidyr', 
+                'lubridate',
+                'rhandsontable',
+                'stringi',
+                'digest')
 
 ###########################################################
 
@@ -15,7 +27,13 @@ install_if_missing = function(p) {
     install.packages(p, dependencies = TRUE)
   }
   else {
-    cat(paste("Skipping already installed package:", p, "\n"))
+    cat(paste('Skipping already installed package:', p, "\n"))
   }
 }
 invisible(sapply(my_packages, install_if_missing))
+
+library(devtools)
+install_github('trestletech/shinyStore')
+install_github('rstudio/DT')
+install_github('hadley/scales')
+install_github('ropensci/plotly')

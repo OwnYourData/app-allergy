@@ -1,0 +1,32 @@
+{
+        "name":"Allergie Tagebuch",
+        "identifier":"eu.ownyourdata.allergy",
+        "type":"external",
+        "description":"dokumentiere deine Allergie (Pollenbelastung, Stimmung und Medikamenteneinnahme)",
+        "permissions":[
+                "eu.ownyourdata.info:read",
+                "eu.ownyourdata.info:write",
+                "eu.ownyourdata.info:update",
+                "eu.ownyourdata.allergy.pollination:read",
+                       "eu.ownyourdata.allergy.pollination:write",
+                       "eu.ownyourdata.allergy.pollination:update",
+                       "eu.ownyourdata.allergy.pollination:delete",
+                       "eu.ownyourdata.allergy.condition:read",
+                       "eu.ownyourdata.allergy.condition:write",
+                       "eu.ownyourdata.allergy.condition:update",
+                       "eu.ownyourdata.allergy.condition:delete",
+                       "eu.ownyourdata.allergy.medintake:read",
+                       "eu.ownyourdata.allergy.medintake:write",
+                       "eu.ownyourdata.allergy.medintake:update",
+                       "eu.ownyourdata.allergy.medintake:delete",
+                       "eu.ownyourdata.scheduler:read",
+                       "eu.ownyourdata.scheduler:write",
+                       "eu.ownyourdata.scheduler:update",
+                       "eu.ownyourdata.scheduler:delete",
+                       "eu.ownyourdata.scheduler.email_config:read",
+                       "eu.ownyourdata.scheduler.email_config:write",
+                       "eu.ownyourdata.scheduler.email_config:update",
+                       "eu.ownyourdata.scheduler.email_config:delete"]
+}
+base64-encoded manifest (https://www.base64encode.org/)
+ew0KICAgICAgICAibmFtZSI6IkFsbGVyZ2llIFRhZ2VidWNoIiwNCiAgICAgICAgImlkZW50aWZpZXIiOiJldS5vd255b3VyZGF0YS5hbGxlcmd5IiwNCiAgICAgICAgInR5cGUiOiJleHRlcm5hbCIsDQogICAgICAgICJkZXNjcmlwdGlvbiI6ImRva3VtZW50aWVyZSBkZWluZSBBbGxlcmdpZSAoUG9sbGVuYmVsYXN0dW5nLCBTdGltbXVuZyB1bmQgTWVkaWthbWVudGVuZWlubmFobWUpIiwNCiAgICAgICAgInBlcm1pc3Npb25zIjpbDQogICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmluZm86cmVhZCIsDQogICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmluZm86d3JpdGUiLA0KICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5pbmZvOnVwZGF0ZSIsDQogICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kucG9sbGluYXRpb246cmVhZCIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5hbGxlcmd5LnBvbGxpbmF0aW9uOndyaXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kucG9sbGluYXRpb246dXBkYXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kucG9sbGluYXRpb246ZGVsZXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kuY29uZGl0aW9uOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5jb25kaXRpb246d3JpdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuYWxsZXJneS5jb25kaXRpb246dXBkYXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kuY29uZGl0aW9uOmRlbGV0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5hbGxlcmd5Lm1lZGludGFrZTpyZWFkIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kubWVkaW50YWtlOndyaXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmFsbGVyZ3kubWVkaW50YWtlOnVwZGF0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5hbGxlcmd5Lm1lZGludGFrZTpkZWxldGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOndyaXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLnNjaGVkdWxlcjp1cGRhdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOmRlbGV0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyLmVtYWlsX2NvbmZpZzp3cml0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOnVwZGF0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOmRlbGV0ZSJdDQp9
