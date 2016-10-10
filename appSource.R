@@ -2,6 +2,8 @@
 # last update: 2016-10-06
 
 # source("uiSourceItemConfig.R")
+source('appSourcePollenwarndienst.R')
+source('appSourceEmail.R')
 
 appSource <- function(){
         fluidRow(
@@ -9,9 +11,8 @@ appSource <- function(){
                        # uiOutput('desktopUiSourceItemsRender')
                        tabsetPanel(
                                type='tabs',
-                               tabPanel('Tab1',
-                                        p('hello world')
-                               )
+                               appSourcePollenwarndienst(),
+                               appSourceEmail()
                        )
                 )
         )

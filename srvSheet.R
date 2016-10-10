@@ -15,10 +15,9 @@ preserveDate <- function(data, fieldTypes){
 
 preserveUTF8 <- function(data, fieldTypes){
         d <- as.list(data)
-        app <- currApp()
-        if(length(all.equal(app, logical(0)))>1){
-                for(i in 1:length(d)){
-                        if(fieldTypes[i] == 'string'){
+        for(i in 1:length(d)){
+                if(fieldTypes[i] == 'string'){
+                        if(Encoding(as.character(d[i][[1]])) != 'UTF-8'){
                                 d[i] <- iconv(as.character(d[i][[1]]),
                                               from='latin1',
                                               to='UTF-8')

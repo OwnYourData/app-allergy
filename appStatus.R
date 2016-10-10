@@ -2,6 +2,7 @@
 # last update: 2016-10-10
 
 source('uiStatusDateSelect.R')
+source('appStatusTrend.R')
 # source('uiStatusItemConfig.R')
 
 appStatus <- function(){
@@ -11,9 +12,7 @@ appStatus <- function(){
                        uiStatusDateSelect(),
                        bsAlert('dataStatus'),
                        tabsetPanel(type='tabs',
-                                   tabPanel('Tab1', br(),
-                                            p('hello world')
-                                   )
+                                   appStatusTrend()
                        )
                 )
         )

@@ -43,3 +43,4 @@ verHistory <- data.frame(rbind(
 ))
 
 # app specific constants
+pwdUiList <- c('Gräser (Poaceae)', 'Pilzsporen (Alternaria)')
