@@ -130,7 +130,6 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
         initVal <- data.frame(lapply(initVal, type.convert),
                               stringsAsFactors=FALSE)
         
-        save(data, repoStruct, initVal, file='tmpRepo2.RData')
         if(nrow(data) > 0){
                 data <- data[, fields, drop=FALSE]
                 data <- data[!is.na(data[fieldKey]), , drop=FALSE]
@@ -211,7 +210,6 @@ observeEvent(input$saveSheet, {
                 sheetRecords <- 
                         sheetRecords[!is.na(sheetRecords[fieldKey]), , 
                                      drop=FALSE]
-                save(sheetRecords, repo, repoStruct, file='tmpRepo3.RData')
                 data <- bulkUpdateItems(sheetRecords,
                                         repo,
                                         fields,
@@ -233,7 +231,6 @@ observeEvent(input$repoSelect, {
         fields <- repoStruct[['fields']]
         fieldKey <- repoStruct[['fieldKey']]
         fieldWidths <- repoStruct[['fieldWidths']]
-        save(repo, repoName, repoStruct, fieldKey, fieldWidths, file='tmpRepo5.RData')
         data <- repoData(repo)
         if(is.null(data[[fieldKey]])){
                 data <- data.frame()
@@ -243,7 +240,6 @@ observeEvent(input$repoSelect, {
                                                data[[fieldKey]] == 'NA'), ]
                 }
         }
-        save(data, file='tmpRepo6.RData')
         suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
         output$dataSheet <- renderRHandsontable({
                 rhotRender(DF, fieldWidths)
@@ -260,7 +256,6 @@ output$dataSheet <- renderRHandsontable({
         fields <- repoStruct[['fields']]
         fieldKey <- repoStruct[['fieldKey']]
         fieldWidths <- repoStruct[['fieldWidths']]
-        save(repo, repoName, repoStruct, fieldKey, fieldWidths, file='tmpRepo0.RData')
         data <- repoData(repo)
         if(is.null(data[[fieldKey]])){
                 data <- data.frame()
@@ -270,7 +265,6 @@ output$dataSheet <- renderRHandsontable({
                                                data[[fieldKey]] == 'NA'), ]
                 }
         }
-        save(data, file='tmpRepo1.RData')
         suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
         rhotRender(DF, fieldWidths)
 })
