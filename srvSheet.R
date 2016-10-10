@@ -15,6 +15,7 @@ preserveDate <- function(data, fieldTypes){
 
 preserveUTF8 <- function(data, fieldTypes){
         d <- as.list(data)
+        app <- currApp()
         if(length(all.equal(app, logical(0)))>1){
                 for(i in 1:length(d)){
                         if(fieldTypes[i] == 'string'){
@@ -103,34 +104,42 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
         fieldTypes <- repoStruct[['fieldTypes']] 
         fieldInits <- repoStruct[['fieldInits']] 
         fieldTitles <- repoStruct[['fieldTitles']] 
+        
+        initVal <- vector()
+        for(i in 1:length(fields)){
+                switch(fieldInits[i],
+                       today = {
+                               initVal <- c(initVal, 
+                                            as.character(as.Date(Sys.Date())))
+                       },
+                       zero = {
+                               initVal <- c(initVal, 
+                                            0)
+                       },
+                       false = {
+                               initVal <- c(initVal, 
+                                            FALSE)
+                       }, 
+                       empty = {
+                               initVal <- c(initVal, 
+                                            '')
+                       }
+                )
+        }
+        names(initVal) <- fields
+        initVal <- data.frame(lapply(initVal, type.convert),
+                              stringsAsFactors=FALSE)
+        
+        save(data, repoStruct, initVal, file='tmpRepo2.RData')
         if(nrow(data) > 0){
                 data <- data[, fields, drop=FALSE]
                 data <- data[!is.na(data[fieldKey]), , drop=FALSE]
-                data <- data[data[fieldKey] != '', , drop=FALSE]
-                data <- data[data[fieldKey] != 'NA', , drop=FALSE]
-                DF <- rbind(data, rep(NA, length(fields)))
+                data <- data[as.character(data[fieldKey]) != '', , drop=FALSE]
+                data <- data[as.character(data[fieldKey]) != 'NA', , drop=FALSE]
+                DF <- rbind(data, initVal)
         }
         if(nrow(data) == 0){
-                initVal <- vector()
-                for(i in 1:length(fields)){
-                        switch(fieldInits[i],
-                               today = {
-                                       initVal <- c(initVal, 
-                                                    as.character(as.Date(Sys.Date())))
-                               },
-                               zero = {
-                                       initVal <- c(initVal, 
-                                                    0)
-                               }, 
-                               empty = {
-                                       initVal <- c(initVal, 
-                                                    '')
-                               }
-                        )
-                }
-                names(initVal) <- fields
-                DF <- data.frame(lapply(initVal, type.convert), 
-                                 stringsAsFactors=FALSE)
+                DF <- initVal
         }
         for(i in 1:length(fields)){
                 switch(fieldTypes[i],
@@ -144,6 +153,14 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
                                        as.integer(DF[, fields[i]])
                                
                        },
+                       boolean = {
+                               DF[, fields[i]] <-
+                                       as.logical(DF[, fields[i]])
+                       },
+                       integer = {
+                               DF[, fields[i]] <-
+                                       as.integer(DF[, fields[i]])
+                       }, 
                        double = {
                                DF[, fields[i]] <-
                                        as.double(DF[, fields[i]])
@@ -180,8 +197,9 @@ observe({
 
 observeEvent(input$saveSheet, {
         sheetRecords <- values[["dataSheet"]]
-        repo <- input$repoSelect
-        repoStruct <- getRepoStruct(repo)
+        repo <- getSheetRepo()
+        repoName <- getSheetRepoName()
+        repoStruct <- getRepoStruct(repoName)
         fields <- repoStruct[['fields']] 
         fieldKey <- repoStruct[['fieldKey']]
         fieldTypes <- repoStruct[['fieldTypes']]
@@ -193,6 +211,7 @@ observeEvent(input$saveSheet, {
                 sheetRecords <- 
                         sheetRecords[!is.na(sheetRecords[fieldKey]), , 
                                      drop=FALSE]
+                save(sheetRecords, repo, repoStruct, file='tmpRepo3.RData')
                 data <- bulkUpdateItems(sheetRecords,
                                         repo,
                                         fields,
@@ -206,34 +225,53 @@ observeEvent(input$saveSheet, {
         output$dataSheetDirty <- renderText('')
 })
 
-# render Excel View UI
-output$dataSheet <- renderRHandsontable({
+observeEvent(input$repoSelect, {
         DF <- data.frame()
-        repo <- getSheetRepo()
-        repoStruct <- getRepoStruct(repo)
+        repo <- appRepos[[input$repoSelect]]
+        repoName <- input$repoSelect
+        repoStruct <- getRepoStruct(repoName)
+        fields <- repoStruct[['fields']]
         fieldKey <- repoStruct[['fieldKey']]
         fieldWidths <- repoStruct[['fieldWidths']]
-        if (is.null(input$dataSheet)) {
-                if(repo == 'Temperatur'){
-                        repo <- 'eu.ownyourdata.room.temp1'
-                } else {
-                        repo <- 'eu.ownyourdata.room.hum1'
-                }
-                data <- repoData(repo)
-                if(is.null(data[[fieldKey]])){
-                        data <- data.frame()
-                } else {
-                        if(nrow(data) > 0){
-                                data <- data[!(is.na(data[[fieldKey]]) | 
-                                                       data[[fieldKey]] == 'NA'), ]
-                        }
-                }
-                suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
+        save(repo, repoName, repoStruct, fieldKey, fieldWidths, file='tmpRepo5.RData')
+        data <- repoData(repo)
+        if(is.null(data[[fieldKey]])){
+                data <- data.frame()
         } else {
-                suppressWarnings(data <- hot_to_r(input$dataSheet))
-                colnames(data) <- appFields
-                suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
+                if(nrow(data) > 0){
+                        data <- data[!(is.na(data[[fieldKey]]) | 
+                                               data[[fieldKey]] == 'NA'), ]
+                }
         }
+        save(data, file='tmpRepo6.RData')
+        suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
+        output$dataSheet <- renderRHandsontable({
+                rhotRender(DF, fieldWidths)
+        })
+})
+
+# render Excel View UI
+output$dataSheet <- renderRHandsontable({
+        input$repoSelect
+        DF <- data.frame()
+        repo <- appRepos[[input$repoSelect]]
+        repoName <- input$repoSelect
+        repoStruct <- getRepoStruct(repoName)
+        fields <- repoStruct[['fields']]
+        fieldKey <- repoStruct[['fieldKey']]
+        fieldWidths <- repoStruct[['fieldWidths']]
+        save(repo, repoName, repoStruct, fieldKey, fieldWidths, file='tmpRepo0.RData')
+        data <- repoData(repo)
+        if(is.null(data[[fieldKey]])){
+                data <- data.frame()
+        } else {
+                if(nrow(data) > 0){
+                        data <- data[!(is.na(data[[fieldKey]]) | 
+                                               data[[fieldKey]] == 'NA'), ]
+                }
+        }
+        save(data, file='tmpRepo1.RData')
+        suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
         rhotRender(DF, fieldWidths)
 })
 

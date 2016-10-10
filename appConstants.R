@@ -6,12 +6,32 @@ appName <- 'allergy'
 appTitle <- 'Allergie Tagebuch'
 app_id <- 'eu.ownyourdata.allergy'
 
-appFields <- c('text')
-appFieldKey <- 'text'
-appFieldTypes <- c('string')
-appFieldInits <- c('empty')
-appFieldTitles <- c('Text')
-appFieldWidths <- c(600)
+# definition of data structure
+appRepos <- list(Pollenbelastung      = 'eu.ownyourdata.allergy.pollination',
+                 Befinden             = 'eu.ownyourdata.allergy.condition',
+                 Medikamenteneinnahme = 'eu.ownyourdata.allergy.medintake')
+appStruct <- list(
+        Pollenbelastung = list(
+                fields     = c('date', 'pollType', 'pollPLZ', 'value'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'string', 'string', 'integer'),
+                fieldInits  = c('empty', 'empty', 'empty', 'zero'),
+                fieldTitles = c('Datum', 'Typ', 'PLZ', 'Belastung'),
+                fieldWidths = c(100, 250, 100, 100)),
+        Befinden = list(
+                fields     = c('date', 'value'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'integer'),
+                fieldInits  = c('empty', 'empty'),
+                fieldTitles = c('Datum', 'Befinden'),
+                fieldWidths = c(100, 100)),
+        Medikamenteneinnahme = list(
+                fields     = c('date', 'value'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'boolean'),
+                fieldInits  = c('empty', 'false'),
+                fieldTitles = c('Datum', 'Einnahme'),
+                fieldWidths = c(100, 100)))
 
 # Version information
 currVersion <- "0.4.0"
