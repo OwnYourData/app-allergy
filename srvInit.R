@@ -230,6 +230,7 @@ observeEvent(input$p3next, {
                      port=input$modalMailerPort,
                      user=input$modalMailerUser,
                      pwd=input$modalMailerPassword)
+        data$`_oydRepoName` <- 'Email-Konfiguration'
         mailConfig <- readItems(app, url)
         if(nrow(mailConfig) > 0){
                 retVal <- updateItem(app, url, data, mailConfig$id)

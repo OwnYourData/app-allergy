@@ -27,7 +27,7 @@ preserveUTF8 <- function(data, fieldTypes){
         d
 }
 
-bulkUpdateItems <- function(sheetData, repo, fields, fieldTypes){
+bulkUpdateItems <- function(sheetData, repo, repoName, fields, fieldTypes){
         app <- currApp()
         if(length(all.equal(app, logical(0)))>1){
                 piaData <- repoData(repo)
@@ -67,6 +67,7 @@ bulkUpdateItems <- function(sheetData, repo, fields, fieldTypes){
                                                                              fieldTypes),
                                                                      fieldTypes)
                                                              dataItem <- appData(dataItem)
+                                                             dataItem$`_oydRepoName` <- repoName
                                                              writeItem(app, repoUrl, dataItem)
                                                              setProgress(value=cnt,
                                                                          detail=paste0(cnt, '/', recCnt,
@@ -211,6 +212,7 @@ observeEvent(input$saveSheet, {
                                      drop=FALSE]
                 data <- bulkUpdateItems(sheetRecords,
                                         repo,
+                                        repoName,
                                         fields,
                                         fieldTypes)
                 output$dataSheet <- renderRHandsontable({
