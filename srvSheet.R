@@ -27,7 +27,7 @@ preserveUTF8 <- function(data, fieldTypes){
         d
 }
 
-bulkUpdateItems <- function(sheetData, repo, repoName, fields, fieldTypes){
+bulkUpdateItems <- function(sheetData, repo, fields, fieldTypes){
         app <- currApp()
         if(length(all.equal(app, logical(0)))>1){
                 piaData <- repoData(repo)
@@ -67,7 +67,6 @@ bulkUpdateItems <- function(sheetData, repo, repoName, fields, fieldTypes){
                                                                              fieldTypes),
                                                                      fieldTypes)
                                                              dataItem <- appData(dataItem)
-                                                             dataItem$`_oydRepoName` <- repoName
                                                              writeItem(app, repoUrl, dataItem)
                                                              setProgress(value=cnt,
                                                                          detail=paste0(cnt, '/', recCnt,
@@ -76,14 +75,21 @@ bulkUpdateItems <- function(sheetData, repo, repoName, fields, fieldTypes){
                                              }
                                      }
                         )
+                        tmp <- as.data.frame(as.matrix(appRepos))
+                        writeLog(
+                                paste0(names(tmp[tmp$V1 == repo, ]),
+                                       ': ',
+                                       'Änderungen im Datenblatt gespeichert (',
+                                       nrow(removePiaData),
+                                       ' Datensätze gelöscht, ',
+                                       nrow(createPiaData),
+                                       ' Datensätze erstellt)'))
                 }
         }
 }
 
 rhotRender <- function(DF, fieldWidths){
-        # write data to Hot
         setHot(DF)
-        # nice formatting
         if(nrow(DF)>20) {
                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
@@ -103,7 +109,7 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
         fieldKey <- repoStruct[['fieldKey']] 
         fieldTypes <- repoStruct[['fieldTypes']] 
         fieldInits <- repoStruct[['fieldInits']] 
-        fieldTitles <- repoStruct[['fieldTitles']] 
+        fieldTitles <- repoStruct[['fieldTitles']]
         
         initVal <- vector()
         for(i in 1:length(fields)){
@@ -129,17 +135,22 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
         names(initVal) <- fields
         initVal <- data.frame(lapply(initVal, type.convert),
                               stringsAsFactors=FALSE)
-        
         if(nrow(data) > 0){
                 data <- data[, fields, drop=FALSE]
                 data <- data[!is.na(data[fieldKey]), , drop=FALSE]
-                data <- data[as.character(data[fieldKey]) != '', , drop=FALSE]
-                data <- data[as.character(data[fieldKey]) != 'NA', , drop=FALSE]
+                if(fieldTypes[match(fieldKey, fields)] == 'date'){
+                        data <- data[as.character(data[fieldKey]) != '', , drop=FALSE]
+                        data <- data[as.character(data[fieldKey]) != 'NA', , drop=FALSE]
+                } else {
+                        data <- data[data[fieldKey] != '', , drop=FALSE]
+                        data <- data[data[fieldKey] != 'NA', , drop=FALSE]
+                }
                 DF <- rbind(data, initVal)
         }
         if(nrow(data) == 0){
                 DF <- initVal
         }
+        
         for(i in 1:length(fields)){
                 switch(fieldTypes[i],
                        date = {
@@ -149,7 +160,7 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
                        },
                        timestamp = {
                                DF[, fields[i]] <- 
-                                       as.integer(DF[, fields[i]])
+                                       as.double(DF[, fields[i]])
                                
                        },
                        boolean = {
@@ -188,34 +199,46 @@ hot_dat2DF <- function(data, repoStruct, orderDecreasing){
 
 observe({
         if(!is.null(input$dataSheet)){
+                sheetRecords <- hot_to_r(input$dataSheet)
                 suppressWarnings(
-                        values[["dataSheet"]] <- hot_to_r(input$dataSheet))
+                        values[["dataSheet"]] <- sheetRecords)
                 output$dataSheetDirty <- renderUI('Daten wurden geändert')
+                if(currRepoSelect != ''){
+                        repoStruct <- getRepoStruct(currRepoSelect)
+                        fields <- repoStruct[['fields']] 
+                        fieldWidths <- repoStruct[['fieldWidths']]
+                        colnames(sheetRecords) <- fields
+                        suppressWarnings(
+                                DF <- hot_dat2DF(sheetRecords, repoStruct))
+                        output$dataSheet <- renderRHandsontable({
+                                rhotRender(DF, fieldWidths)
+                        })
+                }
         }
 })
 
 observeEvent(input$saveSheet, {
         sheetRecords <- values[["dataSheet"]]
-        repo <- getSheetRepo()
-        repoName <- getSheetRepoName()
+        repoName <- input$repoSelect
+        repo <- appRepos[[repoName]]
         repoStruct <- getRepoStruct(repoName)
         fields <- repoStruct[['fields']] 
         fieldKey <- repoStruct[['fieldKey']]
         fieldTypes <- repoStruct[['fieldTypes']]
         fieldTitles <- repoStruct[['fieldTitles']]
         fieldWidths <- repoStruct[['fieldWidths']]
-        
         if (!is.null(sheetRecords)) {
                 colnames(sheetRecords) <- fields
                 sheetRecords <- 
                         sheetRecords[!is.na(sheetRecords[fieldKey]), , 
                                      drop=FALSE]
-                data <- bulkUpdateItems(sheetRecords,
-                                        repo,
-                                        repoName,
-                                        fields,
-                                        fieldTypes)
+                app <- currApp()
+                bulkUpdateItems(sheetRecords,
+                                repo,
+                                fields,
+                                fieldTypes)
                 output$dataSheet <- renderRHandsontable({
+                        DF <- data.frame()
                         suppressWarnings(
                                 DF <- hot_dat2DF(sheetRecords, repoStruct, TRUE))
                         rhotRender(DF, fieldWidths)
@@ -225,34 +248,21 @@ observeEvent(input$saveSheet, {
 })
 
 observeEvent(input$repoSelect, {
-        DF <- data.frame()
-        repo <- appRepos[[input$repoSelect]]
-        repoName <- input$repoSelect
-        repoStruct <- getRepoStruct(repoName)
-        fields <- repoStruct[['fields']]
-        fieldKey <- repoStruct[['fieldKey']]
-        fieldWidths <- repoStruct[['fieldWidths']]
-        data <- repoData(repo)
-        if(is.null(data[[fieldKey]])){
-                data <- data.frame()
-        } else {
-                if(nrow(data) > 0){
-                        data <- data[!(is.na(data[[fieldKey]]) | 
-                                               data[[fieldKey]] == 'NA'), ]
-                }
-        }
-        suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
         output$dataSheet <- renderRHandsontable({
-                rhotRender(DF, fieldWidths)
-        })
+                drawDataSheet()
+        })  
 })
 
 # render Excel View UI
 output$dataSheet <- renderRHandsontable({
-        input$repoSelect
+        drawDataSheet()
+})
+
+drawDataSheet <- function(){
+        currRepoSelect <<- input$repoSelect
         DF <- data.frame()
-        repo <- appRepos[[input$repoSelect]]
-        repoName <- input$repoSelect
+        repo <- appRepos[[currRepoSelect]]
+        repoName <- currRepoSelect
         repoStruct <- getRepoStruct(repoName)
         fields <- repoStruct[['fields']]
         fieldKey <- repoStruct[['fieldKey']]
@@ -262,13 +272,13 @@ output$dataSheet <- renderRHandsontable({
                 data <- data.frame()
         } else {
                 if(nrow(data) > 0){
-                        data <- data[!(is.na(data[[fieldKey]]) | 
-                                               data[[fieldKey]] == 'NA'), ]
+                        # data <- data[!(is.na(data[[fieldKey]]) | 
+                        #                        data[[fieldKey]] == 'NA'), ]
                 }
         }
         suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
         rhotRender(DF, fieldWidths)
-})
+}
 
 output$exportCSV <- downloadHandler(
         filename = paste0(appName, '.csv'),
@@ -276,3 +286,16 @@ output$exportCSV <- downloadHandler(
                 write.csv(values[["dataSheet"]], file)
         }
 )
+
+writeLog <- function(logText){
+        app <- currApp()
+        if(length(all.equal(app, logical(0)))>1){
+                repoUrl <- itemsUrl(app[['url']], 
+                                    appRepos[['Verlauf']])
+                dataItem <- list(
+                        `_oydRepoName` = 'Protokoll',
+                        date = as.character(Sys.time()),
+                        description = logText)
+                writeItem(app, repoUrl, dataItem)
+        }
+}

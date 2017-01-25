@@ -3,20 +3,13 @@
 
 source('srvDateselect.R', local=TRUE)
 source('srvEmail.R', local=TRUE)
+source('srvScheduler.R', local=TRUE)
 source('appLogicChart.R', local=TRUE)
 
 # any record manipulations before storing a record
 appData <- function(record){
         record
 }
-
-getSheetRepo <- reactive({
-        appRepos[[input$repoSelect]]
-})
-
-getSheetRepoName <- reactive({
-        input$repoSelect
-})
 
 getRepoStruct <- function(repo){
         appStruct[[repo]]

@@ -1,5 +1,5 @@
 # functions for handling the initial dialog when starting the app
-# last update: 2016-07-27
+# last update: 2016-10-29
 
 observe({
         session$sendCustomMessage(type='setPiaUrl',
@@ -27,13 +27,25 @@ observe({
         
         app <- setupApp(piaUrl, appKey, appSecret)
         if(urlParamExist){
-                updateStore(session, "pia_url", piaUrl)
-                updateStore(session, "app_key", appKey)
-                updateStore(session, "app_secret", appSecret)
-                createAlert(session, 'urlStatus', alertId = 'myUrlStatus',
-                            style = 'info', append = FALSE,
-                            title = 'Neue PIA Verbindung',
-                            content = 'Beim Öffnen wurden neue Verbindungsdaten zur PIA übergeben und gespeichert.')
+                if(is.null(input$store$pia_url) |
+                   is.null(input$store$app_key) |
+                   is.null(input$store$app_secret)){
+                        closeAlert(session, 'myUrlStatus')
+                } else {
+                        if((input$store$pia_url == urlParams[['PIA_URL']]) &
+                           (input$store$app_key == urlParams[['APP_KEY']]) &
+                           (input$store$app_secret == urlParams[['APP_SECRET']])){
+                                
+                        } else {
+                                updateStore(session, "pia_url", piaUrl)
+                                updateStore(session, "app_key", appKey)
+                                updateStore(session, "app_secret", appSecret)
+                                createAlert(session, 'urlStatus', alertId = 'myUrlStatus',
+                                            style = 'info', append = FALSE,
+                                            title = 'Verbindung zu neuem Datentresor',
+                                            content = 'Beim Öffnen wurden neue Verbindungsdaten zum Datentresor übergeben und gespeichert.')
+                        }
+                }
         } else {
                 closeAlert(session, 'myUrlStatus')
         }
@@ -42,17 +54,9 @@ observe({
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
                 updateTextInput(session, 'modalPiaId', value=appKey)
                 updateTextInput(session, 'modalPiaSecret', value=appSecret)
-                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-                updateTextInput(session, 'app_keyMobile', value=appKey)
-                updateTextInput(session, 'app_secretMobile', value=appSecret)
                 output$currentToken <- renderUI({
                         HTML(paste0('<strong>aktueller Token:</strong><br>',
                                     app[['token']],
-                                    '<br><br>'))
-                })
-                output$mobileToken <- renderUI({
-                        HTML(paste0('<hr>',
-                                    '<strong>Token:</strong> ', app[['token']],
                                     '<br><br>'))
                 })
                 piaMailConfig <- getPiaEmailConfig(app)
@@ -66,18 +70,7 @@ observe({
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
                 updateTextInput(session, 'modalPiaId', value=appKey)
                 updateTextInput(session, 'modalPiaSecret', value=appSecret)
-                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-                updateTextInput(session, 'app_keyMobile', value=appKey)
-                updateTextInput(session, 'app_secretMobile', value=appSecret)
-                
-                # updateTextInput(session, 'modalPiaUrl', value='')
-                # updateTextInput(session, 'modalPiaId', value='')
-                # updateTextInput(session, 'modalPiaSecret', value='')
-                # updateTextInput(session, 'pia_urlMobile', value='')
-                # updateTextInput(session, 'app_keyMobile', value='')
-                # updateTextInput(session, 'app_secretMobile', value='')
                 output$currentToken <- renderText('')
-                output$mobileToken <- renderText('')
         }
 })
 
@@ -102,7 +95,11 @@ output$connectError <- renderUI({
                 if(jsonlite::validate(response)){
                         ''
                 } else {
-                        response
+                        if(grepl('error', response, ignore.case = TRUE)){
+                                response
+                        } else {
+                                paste('Error:', response)
+                        }
                 }
         }
 })
@@ -115,21 +112,6 @@ observeEvent(input$p1next, ({
                                'PIA' = 'primary',
                                'Email' = 'info',
                                'Fertig' = 'info'))
-}))
-
-observeEvent(input$mobilePiaSave, ({
-        updateStore(session, "pia_url", isolate(input$pia_urlMobile))
-        updateStore(session, "app_key", isolate(input$app_keyMobile))
-        updateStore(session, "app_secret", isolate(input$app_secretMobile))
-        piaUrl <<- isolate(input$pia_urlMobile)
-        appKey <<- isolate(input$app_keyMobile)
-        appSecret <<- isolate(input$app_secretMobile)
-        app <- setupApp(piaUrl, appKey, appSecret)
-        output$mobileToken <- renderUI({
-                HTML(paste0('<hr>',
-                            '<strong>Token:</strong> ', app[['token']],
-                            '<br><br>'))
-        })
 }))
 
 observeEvent(input$p2prev, ({
@@ -146,30 +128,19 @@ observeEvent(input$disconnectPIA, {
         updateStore(session, 'pia_url', NA)
         updateStore(session, 'app_key', NA)
         updateStore(session, 'app_secret', NA)
-        piaUrl <<- ""
-        appKey <<- ""
-        appSecret <<- ""
+        updateTextInput(session, 'modalPiaSecret', value='')
+        updateTextInput(session, 'modalPiaId', value='')
+        updateTextInput(session, 'modalPiaUrl', value='')
+        piaUrl <<- ''
+        appKey <<- ''
+        appSecret <<- ''
         createAlert(session, 'piaStatus', alertId = 'myPiaStatus', 
                     style = 'danger', append = FALSE,
                     title = 'PIA Verbindung',
                     content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                      icon('gear'),
-                                     ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
+                                     ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deinem Datentresor!'))
 })
-
-observeEvent(input$disconnectPIAmobile, {
-        updateStore(session, 'pia_url', NA)
-        updateStore(session, 'app_key', NA)
-        updateStore(session, 'app_secret', NA)
-        piaUrl <<- ""
-        appKey <<- ""
-        appSecret <<- ""
-        updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-        updateTextInput(session, 'app_keyMobile', value=appKey)
-        updateTextInput(session, 'app_secretMobile', value=appSecret)
-        output$mobileToken <- renderUI({''})
-})
-
 
 observeEvent(input$p2next, ({
         updateStore(session, "pia_url", isolate(input$modalPiaUrl))
@@ -189,7 +160,7 @@ observeEvent(input$p2next, ({
                             title = 'PIA Verbindung',
                             content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                              icon('gear'),
-                                             ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
+                                             ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deinem Datentresor!'))
         } else {
                 closeAlert(session, 'myPiaStatus')
         }
@@ -230,7 +201,6 @@ observeEvent(input$p3next, {
                      port=input$modalMailerPort,
                      user=input$modalMailerUser,
                      pwd=input$modalMailerPassword)
-        data$`_oydRepoName` <- 'Email-Konfiguration'
         mailConfig <- readItems(app, url)
         if(nrow(mailConfig) > 0){
                 retVal <- updateItem(app, url, data, mailConfig$id)

@@ -3,12 +3,10 @@
 
 source('uiStatusDateSelect.R')
 source('appStatusTrend.R')
-# source('uiStatusItemConfig.R')
 
 appStatus <- function(){
         fluidRow(
                 column(12, 
-                       # uiOutput('desktopUiStatusItemsRender')
                        uiStatusDateSelect(),
                        bsAlert('dataStatus'),
                        tabsetPanel(type='tabs',

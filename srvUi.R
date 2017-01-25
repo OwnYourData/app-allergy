@@ -14,23 +14,19 @@ output$hdrImageLinkDesktop <- renderUI({
         renderHdrImageLink()
 })
 
-output$hdrImageLinkMobile <- renderUI({
-        renderHdrImageLink()
-})
-
 headerTitle <- function() {
         app <- currApp()
         if(length(all.equal(app, logical(0)))>1){
                 app <- currApp()
-                url <- itemsUrl(app[['url']], 'eu.ownyourdata.info')
+                url <- itemsUrl(app[['url']], infoKey)
                 infoRec <- readItems(app, url)
                 if(nrow(infoRec) == 1){
                         infoRec$name
                 } else {
-                        "Neue PIA"                        
+                        "Neuer Datentresor"                        
                 }
         } else {
-                "Neue PIA"
+                "Neuer Datentresor"
         }
 }
 
