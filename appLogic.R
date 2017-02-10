@@ -3,6 +3,7 @@
 
 source('srvDateselect.R', local=TRUE)
 source('srvEmail.R', local=TRUE)
+source('appEmail.R', local=TRUE)
 source('srvScheduler.R', local=TRUE)
 source('appLogicChart.R', local=TRUE)
 

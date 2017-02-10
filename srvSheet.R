@@ -232,7 +232,6 @@ observeEvent(input$saveSheet, {
                 sheetRecords <- 
                         sheetRecords[!is.na(sheetRecords[fieldKey]), , 
                                      drop=FALSE]
-                app <- currApp()
                 bulkUpdateItems(sheetRecords,
                                 repo,
                                 fields,

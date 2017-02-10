@@ -3,16 +3,17 @@
 
 # constants required for every app
 appName <- 'allergy'
-appTitle <- 'Allergie Tagebuch'
+appTitle <- 'Allergie-Tagebuch'
 app_id <- 'eu.ownyourdata.allergy'
 
 # definition of data structure
 appRepos <- list(Pollenbelastung      = 'eu.ownyourdata.allergy.pollination',
                  Befinden             = 'eu.ownyourdata.allergy.condition',
-                 Medikamenteneinnahme = 'eu.ownyourdata.allergy.medintake')
+                 Medikamenteneinnahme = 'eu.ownyourdata.allergy.medintake',
+                 Tagebuch             = 'eu.ownyourdata.allergy.diary')
 appStruct <- list(
         Pollenbelastung = list(
-                fields     = c('date', 'pollType', 'pollPLZ', 'value'),
+                fields      = c('date', 'pollType', 'pollPLZ', 'value'),
                 fieldKey    = 'date',
                 fieldTypes  = c('date', 'string', 'string', 'integer'),
                 fieldInits  = c('empty', 'empty', 'empty', 'zero'),
@@ -26,12 +27,20 @@ appStruct <- list(
                 fieldTitles = c('Datum', 'Befinden'),
                 fieldWidths = c(100, 100)),
         Medikamenteneinnahme = list(
-                fields     = c('date', 'value'),
+                fields      = c('date', 'value'),
                 fieldKey    = 'date',
                 fieldTypes  = c('date', 'boolean'),
                 fieldInits  = c('empty', 'false'),
                 fieldTitles = c('Datum', 'Einnahme'),
-                fieldWidths = c(100, 100)))
+                fieldWidths = c(100, 100)),
+        Tagebuch =list(
+                fields      = c('date', 'value'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'string'),
+                fieldInits  = c('empty', 'empty'),
+                fieldTitles = c('Datum', 'Tagebucheintrag'),
+                fieldWidths = c(100, 400)
+        ))
 
 # Version information
 currVersion <- "0.4.1"
@@ -46,3 +55,7 @@ verHistory <- data.frame(rbind(
 
 # app specific constants
 pwdUiList <- c('Gräser (Poaceae)', 'Pilzsporen (Alternaria)')
+diaryEmailText <- '<ul><li>bewerte dein heutiges Befinden auf einer Skala von 1 (sehr gut) bis 6 (sehr schlecht)</li>
+<li>hast du heute ein Allergiemedikament eingenommen (Ja / Nein)</li>
+<li>optional kannst du auch ein paar Worte zu deinem heutigen Allergie-Tag eingeben</li></ul>
+Antworte auf dieses Mail und schreibe in die 1. Zeile dein Befinden (1-6), in die 2. Zeile Medikamenten-Einnahme (J/N, wenn leer dann wird Nein angenommen) und in die 3. Zeile einen Freitext.'
