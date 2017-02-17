@@ -1,30 +1,32 @@
 # layout for configuring pollination sources
-# last update: 2016-10-06
+# last update: 2017-02-17
 
 appSourcePollenwarndienst <- function(){
         tabPanel('Pollenwarndienst', br(),
+                 helpText('Konfiguriere hier jene Postleitzahlen von denen regelmäßig die Pollenbelastung (via pollenwarndienst.at) gespeichert werden soll.', style='display:inline'), 
+                 br(),br(),
                  fluidRow(
                          column(4,
-                                selectInput('pwdList',
-                                            'Pollen Typ:',
-                                            pwdUiList,
+                                selectInput('plzList',
+                                            'Postleitzahlen:',
+                                            plzUiList,
                                             multiple=TRUE, 
                                             selectize=FALSE,
                                             size=12,
                                             selected = 'Gräser (Poaceae)'),
-                                actionButton('delpwdList', 'Entfernen', 
+                                actionButton('delPlzList', 'Entfernen', 
                                              icon('trash'))),
                          column(8,
-                                textInput('pwdItemName',
+                                textInput('plzName',
                                           'Name:',
-                                          value = 'Gräser (Poaceae)'),
-                                textInput('pwdPlzItem',
+                                          value = ''),
+                                textInput('plzCode',
                                           'Postleitzahl:',
-                                          value = '2540'),
+                                          value = ''),
                                 br(),
-                                actionButton('addPwdItem', 
+                                actionButton('addPlzItem', 
                                              'Hinzufügen', icon('plus')),
-                                actionButton('updatePwdItem', 
+                                actionButton('updatePlzItem', 
                                              'Aktualisieren', icon('edit'))
                          )
                  )
