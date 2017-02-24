@@ -12,7 +12,6 @@ observe({
                 setAllergyEmailStatus('Status: derzeit sind tägliche Emails nicht eingerichtet')
                 updateTextInput(session, 'allergyEmail', value='')
         } else {
-                save(app, schedulerEmail, file='tmpScheduler.RData')
                 updateTextInput(session, 'allergyEmail', 
                                 value=schedulerEmail[['email']])
                 setAllergyEmailStatus('Status: tägliche Emails werden an die angegebene Adresse versandt')
@@ -31,6 +30,7 @@ observeEvent(input$saveAllergyEmail, {
                 )
                 condition_structure <- list(
                         repo=appRepos$Befinden,
+                        repoName='Befinden',
                         fields=condition_fields
                 )
                 medintake_fields <- list(
@@ -39,6 +39,7 @@ observeEvent(input$saveAllergyEmail, {
                 )
                 medintake_structure <- list(
                         repo=appRepos$Medikamenteneinnahme,
+                        repoName='Medikamenteneinnahme',
                         fields=medintake_fields
                 )
                 diary_fields <- list(
@@ -47,6 +48,7 @@ observeEvent(input$saveAllergyEmail, {
                 )
                 diary_structure <- list(
                         repo=appRepos$Tagebuch,
+                        repoName='Tagebuch',
                         fields=diary_fields
                 )
                 response_structure <- list(

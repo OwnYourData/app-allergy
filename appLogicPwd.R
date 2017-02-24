@@ -12,7 +12,7 @@ readPlzItems <- function(){
                         if(nrow(retVal) > 0){
                                 plzItems <- retVal
                                 rownames(plzItems) <- plzItems$name
-                                plzItems <- plzItems[, c('parameters.replace.PLZ', 'id')]
+                                plzItems <- plzItems[, c('parameters.replace.plz', 'id')]
                                 colnames(plzItems) <- c('plzCode', 'id')
                         }
                 }
@@ -29,11 +29,33 @@ plzList <- function(){
         } else {
                 colRepos <- c('keine Datenquellen vorhanden')
         }
-        # updateSelectInput(
-        #         session,
-        #         'statusRepoSelect',
-        #         choices = colRepos,
-        #         selected = colRepos[1])
+        
+        plz <- allItems$plzCode
+        if(length(plz) > 0){
+                plzPollList <- as.character(sort(mapply(
+                        paste0, 
+                        rep(plz, length(pollenList)), 
+                        ': ',
+                        rep(pollenList, length(plz)))))
+                poll1SelectDefault <- plzPollList[1]
+                poll2SelectDefault <- plzPollList[2]
+                poll3SelectDefault <- plzPollList[3]
+                updateSelectInput(
+                        session,
+                        'poll1Select',
+                        choices = c('keine', plzPollList),
+                        selected = poll1SelectDefault)
+                updateSelectInput(
+                        session,
+                        'poll2Select',
+                        choices = c('keine', plzPollList),
+                        selected = poll2SelectDefault)
+                updateSelectInput(
+                        session,
+                        'poll3Select',
+                        choices = c('keine', plzPollList),
+                        selected = poll3SelectDefault)
+        }
         appRepos <<- append(appReposDefault,
                             setNames(as.character(allItems$repo),
                                      as.list(rownames(allItems))))
@@ -72,8 +94,8 @@ observeEvent(input$addPlzItem, {
         if(errMsg == ''){
                 app <- currApp()
                 replace <- list(
-                        PLZ = itemPlz,
-                        repoName = itemName
+                        plz = itemPlz,
+                        repo_name = itemName
                 )
                 writeSchedulerRscriptReference(app,
                                                itemName,
@@ -114,8 +136,8 @@ observeEvent(input$updatePlzItem, {
                 app <- currApp()
                 id <- allItems[rownames(allItems) == selItem, 'id']
                 replace <- list(
-                        PLZ = itemPlz,
-                        repoName = itemName
+                        plz = itemPlz,
+                        repo_name = itemName
                 )
                 writeSchedulerRscriptReference(app,
                                                itemName,

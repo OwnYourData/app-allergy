@@ -3,6 +3,8 @@
 
 source('uiStatusDateSelect.R')
 source('appStatusTrend.R')
+source('appStatusTable.R')
+source('appStatusKorrelation.R')
 
 appStatus <- function(){
         fluidRow(
@@ -10,7 +12,9 @@ appStatus <- function(){
                        uiStatusDateSelect(),
                        bsAlert('dataStatus'),
                        tabsetPanel(type='tabs',
-                                   appStatusTrend()
+                                   appStatusTrend(),
+                                   appStatusTable(),
+                                   appStatusKorrelation()
                        )
                 )
         )
