@@ -19,7 +19,6 @@ observe({
 })
 
 observeEvent(input$saveAllergyEmail, {
-        setAllergyEmailStatus('bearbeite Eingabe...')
         email <- input$allergyEmail
         if(validEmail(email)){
                 app <- currApp()

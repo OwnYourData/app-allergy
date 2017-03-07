@@ -154,6 +154,14 @@ lapply(pollenList, function(x){
         record <- list(timestamp=as.numeric(Sys.time()), pollType=x, value=result, '_oydRepoName'=repoName)
       } else {
         myDat <- xpathSApply(pagetree,"//h3[@class='polltitle' and contains(text(),'Cupressaceae')]/..//div[@class='date']", xmlValue)[i]
+        myDat <- sub('Jänner', 'January', myDat)
+        myDat <- sub('Februar', 'February', myDat)
+        myDat <- sub('März', 'March', myDat)
+        myDat <- sub('Mai', 'May', myDat)
+        myDat <- sub('Juni', 'June', myDat)
+        myDat <- sub('Juli', 'July', myDat)
+        myDat <- sub('Oktober', 'October', myDat)
+        myDat <- sub('Dezember', 'December', myDat)
         ts <- as.POSIXct(paste(as.Date(gsub('.*, (.*)', '\\1', myDat), '%d. %B'), "12:00"))
         record <- list(timestamp=as.numeric(ts), pollType=x, value=result, '_oydRepoName'=repoName)
       }
