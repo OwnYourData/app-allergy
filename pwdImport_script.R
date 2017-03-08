@@ -153,7 +153,7 @@ lapply(pollenList, function(x){
       if(i==1){
         record <- list(timestamp=as.numeric(Sys.time()), pollType=x, value=result, '_oydRepoName'=repoName)
       } else {
-        myDat <- xpathSApply(pagetree,"//h3[@class='polltitle' and contains(text(),'", x, "')]/..//div[@class='date']", xmlValue)[i]
+        myDat <- xpathSApply(pagetree, paste0("//h3[@class='polltitle' and contains(text(),'", x, "')]/..//div[@class='date']"), xmlValue)[i]
         myDat <- sub('Jänner', 'January', myDat)
         myDat <- sub('Februar', 'February', myDat)
         myDat <- sub('März', 'March', myDat)
