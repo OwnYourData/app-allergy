@@ -3,5 +3,9 @@
 
 appStatusTable <- function(){
         tabPanel('Tabelle', br(),
-                 p('hello world'))
+                 selectInput('tableSelect',
+                             label = 'Liste',
+                             choices = c('keine'),
+                             selected = 'keine'),
+                 DT::dataTableOutput('tableList'))
 }

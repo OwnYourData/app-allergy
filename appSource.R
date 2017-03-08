@@ -4,6 +4,7 @@
 # source("uiSourceItemConfig.R")
 source('appSourcePollenwarndienst.R')
 source('appSourceEmail.R')
+source('appSourceInput.R')
 
 appSource <- function(){
         fluidRow(
@@ -12,7 +13,8 @@ appSource <- function(){
                        tabsetPanel(
                                type='tabs',
                                appSourcePollenwarndienst(),
-                               appSourceEmail()
+                               appSourceEmail(),
+                               appSourceInput()
                        )
                 )
         )

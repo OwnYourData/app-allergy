@@ -74,17 +74,38 @@ currApp <- reactive({
         app
 })
 
+toDate <- function(data){
+        if(nrow(data) > 0){
+                data$date <- as.POSIXct(data$timestamp, origin = '1970-01-01')
+                data
+        } else {
+                data.frame()
+        }
+}
+
 currData <- reactive({
         # list any input controls that effect currData
         input$modalPiaUrl
         input$modalPiaId
         input$modalPiaSecret
+        input$poll1Select
+        input$poll2Select
+        input$poll3Select
         
         app <- currApp()
         if(length(app) > 0) {
-                url <- itemsUrl(app[['url']], 
-                                paste0(app[['app_key']]))
-                readItems(app, url)
+                # data = pollen, condition, medintake, diary
+                poll1Data <- toDate(pollData(input$poll1Select))
+                poll2Data <- toDate(pollData(input$poll2Select))
+                data <- combineData(poll1Data, poll2Data)
+                poll3Data <- toDate(pollData(input$poll3Select))
+                data <- combineData(data, poll3Data)
+                condData <- repoData('eu.ownyourdata.allergy.condition')
+                data <- combineData(data, condData)
+                medData <- repoData('eu.ownyourdata.allergy.medintake')
+                data <- combineData(data, medData)
+                diaryData <- repoData('eu.ownyourdata.allergy.diary')
+                combineData(data, diaryData)
         } else {
                 data.frame()
         }

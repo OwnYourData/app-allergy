@@ -13,8 +13,7 @@ appStatus <- function(){
                        bsAlert('dataStatus'),
                        tabsetPanel(type='tabs',
                                    appStatusTrend(),
-                                   appStatusTable(),
-                                   appStatusKorrelation()
+                                   appStatusTable()
                        )
                 )
         )

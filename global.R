@@ -3,7 +3,7 @@
 
 # Comments ================================================
 # - run locally
-#   runApp('~/cs/ownyourdata/apps/allergy2', host='0.0.0.0', port=1237)
+#   runApp('~/oyd/allergy', host='0.0.0.0', port=1237)
 # - copy files to Github
 #   cp -r *.R *.r *.txt www docker github/app-allergy; cd github/app-allergy;
 

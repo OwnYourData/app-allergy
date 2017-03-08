@@ -63,7 +63,7 @@ plzList <- function(){
                 session,
                 'repoSelect',
                 choices = names(appRepos),
-                selected = 'Verlauf')
+                selected = names(appRepos)[1])
 }
 
 # show attributes on selecting an item in the Collector list
@@ -100,7 +100,7 @@ observeEvent(input$addPlzItem, {
                 writeSchedulerRscriptReference(app,
                                                itemName,
                                                'Pollenwarndienst',
-                                               '6 */4 * * *',
+                                               '2 */12 * * *',
                                                replace)
                 initNames <- rownames(allItems)
                 updateSelectInput(session, 'plzList',
@@ -142,7 +142,7 @@ observeEvent(input$updatePlzItem, {
                 writeSchedulerRscriptReference(app,
                                                itemName,
                                                'Pollenwarndienst',
-                                               '6 */4 * * *',
+                                               '2 */12 * * *',
                                                replace, 
                                                id)
                 newRowNames <- rownames(allItems)

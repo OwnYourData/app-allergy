@@ -7,14 +7,16 @@ setAllergyEmailStatus <- function(msg){
 
 observe({
         app <- currApp()
-        schedulerEmail <- getPiaSchedulerEmail(app)
-        if(length(schedulerEmail) == 0) {
-                setAllergyEmailStatus('Status: derzeit sind tägliche Emails nicht eingerichtet')
-                updateTextInput(session, 'allergyEmail', value='')
-        } else {
-                updateTextInput(session, 'allergyEmail', 
-                                value=schedulerEmail[['email']])
-                setAllergyEmailStatus('Status: tägliche Emails werden an die angegebene Adresse versandt')
+        if(length(app) > 0){
+                schedulerEmail <- getPiaSchedulerEmail(app)
+                if(length(schedulerEmail) == 0) {
+                        setAllergyEmailStatus('Status: derzeit sind tägliche Emails nicht eingerichtet')
+                        updateTextInput(session, 'allergyEmail', value='')
+                } else {
+                        updateTextInput(session, 'allergyEmail', 
+                                        value=schedulerEmail[['email']])
+                        setAllergyEmailStatus('Status: tägliche Emails werden an die angegebene Adresse versandt')
+                }
         }
 })
 

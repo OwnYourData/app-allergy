@@ -42,35 +42,137 @@ repoData <- function(repo){
 }
 
 appStart <- function(){
-        allItems <- readPlzItems()
-        updateSelectInput(session, 'plzList',
-                          choices = rownames(allItems))
-        plzList()
-        
-        # write script to collect Pollenwarndienst-Data used by scheduler ------
         app <- currApp()
-        scriptRepoUrl <- itemsUrl(app[['url']], scriptRepo)
-        scriptItems <- readItems(app, scriptRepoUrl)
-        schedulerPwdScript <- scriptItems[
-                scriptItems$name == 'Pollenwarndienst', ]
-        if(nrow(schedulerPwdScript) > 1){
-                lapply(schedulerPwdScript$id,
-                       function(x) deleteItem(app, 
-                                              scriptRepoUrl,
-                                              as.character(x)))
-                schedulerPwdScript <- data.frame()
-        }
-        scriptData <- list(name           = 'Pollenwarndienst',
-                           script         = pwdScript,
-                           '_oydRepoName' = 'Allergie-Skript')
-        if(nrow(schedulerPwdScript) == 0){
-                writeItem(app, scriptRepoUrl, scriptData)
-        } else {
-                updateItem(app, scriptRepoUrl, scriptData,
-                           schedulerPwdScript$id)
+        if(length(app) > 0){
+                # fill import list
+                allItems <- readPlzItems()
+                updateSelectInput(session, 'plzList',
+                                  choices = rownames(allItems))
+                plzList()
+                
+                # repo list in Table tab
+                plz <- allItems$plzCode
+                plzPollList <- as.character(sort(mapply(
+                        paste0, 
+                        rep(plz, length(pollenList)), 
+                        ': ',
+                        rep(pollenList, length(plz)))))
+                complete <- c('persönliche Aufzeichnungen', plzPollList)
+                updateSelectInput(session, 'tableSelect',
+                                  choices = complete)
+        
+                # Pollination selection in chart
+                url <- itemsUrl(app[['url']],
+                                paste0(appKey, '.chart_config'))
+                cfg <- readItems(app, url)
+                if(nrow(cfg) == 1){
+                        updateSelectInput(session, 'poll1Select',
+                                          selected = cfg$poll1Select)
+                        updateSelectInput(session, 'poll2Select',
+                                          selected = cfg$poll2Select)
+                        updateSelectInput(session, 'poll3Select',
+                                          selected = cfg$poll3Select)
+                }
+                
+                # write script to collect Pollenwarndienst-Data used by scheduler ------
+                scriptRepoUrl <- itemsUrl(app[['url']], scriptRepo)
+                scriptItems <- readItems(app, scriptRepoUrl)
+                schedulerPwdScript <- scriptItems[
+                        scriptItems$name == 'Pollenwarndienst', ]
+                if(nrow(schedulerPwdScript) > 1){
+                        lapply(schedulerPwdScript$id,
+                               function(x) deleteItem(app, 
+                                                      scriptRepoUrl,
+                                                      as.character(x)))
+                        schedulerPwdScript <- data.frame()
+                }
+                scriptData <- list(name           = 'Pollenwarndienst',
+                                   script         = pwdScript,
+                                   '_oydRepoName' = 'Allergie-Skript')
+                if(nrow(schedulerPwdScript) == 0){
+                        writeItem(app, scriptRepoUrl, scriptData)
+                } else {
+                        updateItem(app, scriptRepoUrl, scriptData,
+                                   schedulerPwdScript$id)
+                }
         }
 }
 
 output$trendChart <- renderPlotly({
         trendPlotly()
 })
+
+observeEvent(input$saveAllergyInput, {
+        app <- currApp()
+        if(length(app) > 0){
+                myDate <- as.character(input$dateInput)
+                
+                # Befinden
+                url <- itemsUrl(app[['url']],
+                                paste0(app[['app_key']], '.condition'))
+                data <- list(
+                        date = myDate,
+                        value = input$conditionInput,
+                        '_oydRepoName' = 'Befinden')
+                writeItem(app, url, data)
+                
+                # Medikamenteneinnahme
+                url <- itemsUrl(app[['url']],
+                                paste0(app[['app_key']], '.medintake'))
+                data <- list(
+                        date = myDate,
+                        value = input$medInput,
+                        '_oydRepoName' = 'Medikamenteneinnahme')
+                writeItem(app, url, data)
+                
+                # Notiz
+                if(!is.na(input$diaryInput) &
+                   (nchar(as.character(input$diaryInput)) > 0))
+                {
+                        url <- itemsUrl(app[['url']],
+                                        paste0(app[['app_key']], '.diary'))
+                        data <- list(
+                                date = myDate,
+                                value = input$diaryInput,
+                                '_oydRepoName' = 'Tagebuch')
+                        writeItem(app, url, data)
+                }
+                
+                output$allergyInputStatus <- renderUI('Daten wurden erfolgreich gespeichert')
+        }
+})
+
+output$tableList <- DT::renderDataTable(datatable({
+        switch(as.character(input$tableSelect),
+               'persönliche Aufzeichnungen'={
+                       condData <- dateRangeSelect(
+                               repoData('eu.ownyourdata.allergy.condition'), FALSE)
+                       diaryData <- dateRangeSelect(
+                               repoData('eu.ownyourdata.allergy.diary'), FALSE)
+                       medData <- dateRangeSelect(
+                               repoData('eu.ownyourdata.allergy.medintake'), FALSE)
+                       data <- combineData(combineData(condData, diaryData), medData)
+                       if(nrow(data) > 0){
+                               data$Medikamenteneinnahme <- 'Nein'
+                               data[data$value, 'Medikamenteneinnahme'] <- 'Ja'
+                               data <- data[, c('date', 'value.x', 'Medikamenteneinnahme', 'value.y')]
+                               colnames(data) <- c('Datum', 'Befinden', 'Medikamenteneinnahme', 'Notiz')
+                               data[data$Medikamenteneinnahme, ]
+                       }
+                       data },
+               { pollData <- dateRangeSelect(pollData(input$tableSelect))
+                 if(nrow(pollData) > 0){
+                         pollData$Datum <- format(as.POSIXct(pollData$timestamp, 
+                                                             origin='1970-01-01'), 
+                                                  '%Y-%m-%d %k Uhr')
+                         pollData <- pollData[, c('Datum', 'value', 'belastungTxt')]
+                         colnames(pollData) <- c('Datum', 'Pollenbelastung', 'Beschreibung')
+                         pollData
+                 } else {
+                         data.frame()
+                 }})
+}, options = list(
+        language = list(
+                url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/German.json')
+        )
+))
