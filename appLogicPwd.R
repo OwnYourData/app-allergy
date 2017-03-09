@@ -214,7 +214,7 @@ observeEvent(input$delPlzList, {
                 updateTextInput(session, 'plzName',
                                 value = '')
                 updateSelectInput(session, 'country',
-                                  ' ')
+                                  selected = ' ')
                 updateTextInput(session, 'plzCode',
                                 value = '')
         }
