@@ -22,12 +22,16 @@ observe({
                        '6'={ updateDateRangeInput(session, 'dateRange',
                                                   start = as.Date(Sys.Date() - months(12)),
                                                   end = as.Date(Sys.Date())) },
-                       '10'={ data <- currData()
-                       myStart <- min(as.Date(data$date), na.rm=TRUE)
-                       myEnd <- max(as.Date(data$date), na.rm=TRUE)
-                       updateDateRangeInput(session, 'dateRange',
-                                            start = myStart,
-                                            end = myEnd) },
+                       '10'={ 
+                               data <- currData()
+                               if(nrow(data) > 0){
+                                       myStart <- min(as.Date(data$date), na.rm=TRUE)
+                                       myEnd <- max(as.Date(data$date), na.rm=TRUE)
+                                       updateDateRangeInput(session, 'dateRange',
+                                                            start = myStart,
+                                                            end = myEnd) 
+                               }
+                        },
                        {})
         }
 })

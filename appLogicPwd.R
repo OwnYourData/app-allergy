@@ -12,8 +12,10 @@ readPlzItems <- function(){
                         if(nrow(retVal) > 0){
                                 plzItems <- retVal
                                 rownames(plzItems) <- plzItems$name
-                                plzItems <- plzItems[, c('parameters.replace.plz', 'id')]
-                                colnames(plzItems) <- c('plzCode', 'id')
+                                plzItems <- plzItems[, c('parameters.replace.plz', 
+                                                         'parameters.replace.country', 
+                                                         'id')]
+                                colnames(plzItems) <- c('plzCode', 'country', 'id')
                         }
                 }
         }
@@ -32,11 +34,23 @@ plzList <- function(){
         
         plz <- allItems$plzCode
         if(length(plz) > 0){
-                plzPollList <- as.character(sort(mapply(
-                        paste0, 
-                        rep(plz, length(pollenList)), 
-                        ': ',
-                        rep(pollenList, length(plz)))))
+                plzPollList <- c(apply(allItems, 1, function(x){
+                        as.character(sort(mapply(
+                                paste0, 
+                                rep(x['plzCode'], 
+                                    switch(x['country'],
+                                           'Österreich'={ length(pollenListAT) },
+                                           'Deutschland'={ length(pollenListDE) },
+                                           'Schweiz'={ length(pollenListCH) },
+                                           { 0 } )), 
+                                ': ',
+                                rep(switch(x['country'],
+                                           'Österreich'={ pollenListAT },
+                                           'Deutschland'={ pollenListDE },
+                                           'Schweiz'={ pollenListCH },
+                                           { data.frame() } ), 
+                                    length(x['plzCode'])))))
+                }))
                 poll1SelectDefault <- plzPollList[1]
                 poll2SelectDefault <- plzPollList[2]
                 poll3SelectDefault <- plzPollList[3]
@@ -76,8 +90,11 @@ observeEvent(input$plzList, {
         allItems <- readPlzItems()
         selItemName <- selItem
         selItemPlz <- allItems[rownames(allItems) == selItem, 'plzCode']
+        selItemCountry <- allItems[rownames(allItems) == selItem, 'country']
         updateTextInput(session, 'plzName',
                         value = selItemName)
+        updateSelectInput(session, 'country',
+                          selected = selItemCountry)
         updateTextInput(session, 'plzCode',
                         value = trim(as.character(selItemPlz)))
 })
@@ -85,8 +102,9 @@ observeEvent(input$plzList, {
 observeEvent(input$addPlzItem, {
         errMsg <- ''
         itemName <- input$plzName
-        itemPlz  <- input$plzCode
-
+        itemPlz <- input$plzCode
+        itemCountry <- input$country
+        
         allItems <- readPlzItems()
         if(itemName %in% rownames(allItems)){
                 errMsg <- 'Name bereits vergeben'
@@ -95,6 +113,7 @@ observeEvent(input$addPlzItem, {
                 app <- currApp()
                 replace <- list(
                         plz = itemPlz,
+                        country = itemCountry,
                         repo_name = itemName
                 )
                 writeSchedulerRscriptReference(app,
@@ -108,6 +127,8 @@ observeEvent(input$addPlzItem, {
                                   selected = NA)
                 updateTextInput(session, 'plzName',
                                 value = '')
+                updateSelectInput(session, 'country',
+                                  selected = ' ')
                 updateTextInput(session, 'plzCode',
                                 value = '')
         }
@@ -127,6 +148,7 @@ observeEvent(input$updatePlzItem, {
         errMsg   <- ''
         selItem  <- input$plzList
         itemName <- input$plzName
+        itemCountry  <- input$country
         itemPlz  <- input$plzCode
         if(is.null(selItem)){
                 errMsg <- 'Keine Postleitzahl ausgewählt.'
@@ -137,6 +159,7 @@ observeEvent(input$updatePlzItem, {
                 id <- allItems[rownames(allItems) == selItem, 'id']
                 replace <- list(
                         plz = itemPlz,
+                        country = itemCountry,
                         repo_name = itemName
                 )
                 writeSchedulerRscriptReference(app,
@@ -152,6 +175,8 @@ observeEvent(input$updatePlzItem, {
                                   selected = NA)
                 updateTextInput(session, 'plzName',
                                 value = '')
+                updateSelectInput(session, 'country',
+                                  selected = ' ')
                 updateTextInput(session, 'plzCode',
                                 value = '')
         }
@@ -188,6 +213,8 @@ observeEvent(input$delPlzList, {
                                   selected = NA)
                 updateTextInput(session, 'plzName',
                                 value = '')
+                updateSelectInput(session, 'country',
+                                  ' ')
                 updateTextInput(session, 'plzCode',
                                 value = '')
         }

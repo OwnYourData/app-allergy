@@ -3,7 +3,7 @@
 
 appSourcePollenwarndienst <- function(){
         tabPanel('Pollenwarndienst', br(),
-                 helpText('Konfiguriere hier jene Postleitzahlen von denen regelmäßig die Pollenbelastung (via pollenwarndienst.at) gespeichert werden soll.', style='display:inline'), 
+                 helpText('Konfiguriere hier jene Postleitzahlen von denen regelmäßig die Pollenbelastung (via polleninfo.org) gespeichert werden soll.', style='display:inline'), 
                  br(),br(),
                  fluidRow(
                          column(4,
@@ -20,6 +20,13 @@ appSourcePollenwarndienst <- function(){
                                 textInput('plzName',
                                           'Name:',
                                           value = ''),
+                                selectInput('country',
+                                            'Land:',
+                                            choices = c(' ',
+                                                        'Österreich',
+                                                        'Deutschland',
+                                                        'Schweiz'),
+                                            selected = ' '),
                                 textInput('plzCode',
                                           'Postleitzahl:',
                                           value = ''),

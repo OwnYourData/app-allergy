@@ -46,32 +46,46 @@ appStart <- function(){
         if(length(app) > 0){
                 # fill import list
                 allItems <- readPlzItems()
-                updateSelectInput(session, 'plzList',
-                                  choices = rownames(allItems))
-                plzList()
+                if(nrow(allItems) > 0){
+                        updateSelectInput(session, 'plzList',
+                                          choices = rownames(allItems))
+                        plzList()
+                        
+                        # repo list in Table tab
+                        plz <- allItems$plzCode
+                        plzPollList <- c(apply(allItems, 1, function(x){
+                                as.character(sort(mapply(
+                                        paste0, 
+                                        rep(x['plzCode'], 
+                                            switch(x['country'],
+                                                   'Österreich'={ length(pollenListAT) },
+                                                   'Deutschland'={ length(pollenListDE) },
+                                                   'Schweiz'={ length(pollenListCH) },
+                                                   { 0 } )), 
+                                        ': ',
+                                        rep(switch(x['country'],
+                                                   'Österreich'={ pollenListAT },
+                                                   'Deutschland'={ pollenListDE },
+                                                   'Schweiz'={ pollenListCH },
+                                                   { data.frame() } ), 
+                                            length(x['plzCode'])))))
+                        }))
+                        complete <- c('persönliche Aufzeichnungen', plzPollList)
+                        updateSelectInput(session, 'tableSelect',
+                                          choices = complete)
                 
-                # repo list in Table tab
-                plz <- allItems$plzCode
-                plzPollList <- as.character(sort(mapply(
-                        paste0, 
-                        rep(plz, length(pollenList)), 
-                        ': ',
-                        rep(pollenList, length(plz)))))
-                complete <- c('persönliche Aufzeichnungen', plzPollList)
-                updateSelectInput(session, 'tableSelect',
-                                  choices = complete)
-        
-                # Pollination selection in chart
-                url <- itemsUrl(app[['url']],
-                                paste0(appKey, '.chart_config'))
-                cfg <- readItems(app, url)
-                if(nrow(cfg) == 1){
-                        updateSelectInput(session, 'poll1Select',
-                                          selected = cfg$poll1Select)
-                        updateSelectInput(session, 'poll2Select',
-                                          selected = cfg$poll2Select)
-                        updateSelectInput(session, 'poll3Select',
-                                          selected = cfg$poll3Select)
+                        # Pollination selection in chart
+                        url <- itemsUrl(app[['url']],
+                                        paste0(appKey, '.chart_config'))
+                        cfg <- readItems(app, url)
+                        if(nrow(cfg) == 1){
+                                updateSelectInput(session, 'poll1Select',
+                                                  selected = cfg$poll1Select)
+                                updateSelectInput(session, 'poll2Select',
+                                                  selected = cfg$poll2Select)
+                                updateSelectInput(session, 'poll3Select',
+                                                  selected = cfg$poll3Select)
+                        }
                 }
                 
                 # write script to collect Pollenwarndienst-Data used by scheduler ------

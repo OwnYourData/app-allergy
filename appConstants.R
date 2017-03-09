@@ -62,7 +62,7 @@ verHistory <- data.frame(rbind(
 # app specific constants
 plzUiList <- vector()
 scriptRepo <- 'eu.ownyourdata.allergy.script'
-pollenList <- c(
+pollenListAT <- c(
         'Zypressengewächse (Cupressaceae)',
         'Erle (Alnus)',
         'Hasel (Corylus)',
@@ -76,6 +76,27 @@ pollenList <- c(
         'Beifuß (Artemisia)',
         'Ragweed (Ambrosia)',
         'Pilzsporen (Alternaria)'
+)
+pollenListDE <- c(
+        'Erle (Alnus)',
+        'Hasel (Corylus)',
+        'Esche (Fraxinus)',
+        'Birke (Betula)',
+        'Gräser (Poaceae)',
+        'Roggen (Secale)',
+        'Beifuß (Artemisia)',
+        'Ragweed (Ambrosia)')
+pollenListCH <- c(
+        'Erle (Alnus)',
+        'Hasel (Corylus)',
+        'Esche (Fraxinus)',
+        'Birke (Betula)',
+        'Platane (Platanus)',
+        'Buche (Fagus)',
+        'Oak (Quercus)',
+        'Gräser (Poaceae)',
+        'Beifuß (Artemisia)',
+        'Ragweed (Ambrosia)'
 )
 diaryEmailText <- '<ul><li>bewerte dein heutiges Befinden auf einer Skala von 1 (sehr gut) bis 6 (sehr schlecht)</li>
 <li>hast du heute ein Allergiemedikament eingenommen (Ja / Nein)</li>
