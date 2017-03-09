@@ -177,6 +177,7 @@ trendPlotly <- function(){
                         add_lines(x = as.POSIXct(paste(as.Date(condData$date), "0:00")),
                                   y = as.numeric(condData$value),
                                   name = 'Befinden',
+                                  hoverinfo = 'text',
                                   text = '',
                                   line=list(
                                           width = 3,
@@ -195,12 +196,11 @@ trendPlotly <- function(){
                 outputPlot <- outputPlot %>%
                         add_markers(x = ~as.POSIXct(paste(as.Date(diaryCondData$date), "0:00")),
                                     y = ~as.numeric(diaryCondData$value),
-                                    # hoverinfo = 'text',
                                     text = diaryCondData$diary,
                                     marker = list(
                                             color= 'blue',
                                             size = diaryCondData$size),
-                                    name = '',
+                                    name = 'Befinden',
                                     showlegend = FALSE)
         }
         
