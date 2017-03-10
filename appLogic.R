@@ -56,7 +56,12 @@ appStart <- function(){
                         plzPollList <- c(apply(allItems, 1, function(x){
                                 as.character(sort(mapply(
                                         paste0, 
-                                        rep(x['plzCode'], 
+                                        rep(paste0(switch(x['country'],
+                                                          'Österreich'='A-',
+                                                          'Deutschland'='D-',
+                                                          'Schweiz'='CH-',
+                                                          { '' } ),
+                                                   x['plzCode']),
                                             switch(x['country'],
                                                    'Österreich'={ length(pollenListAT) },
                                                    'Deutschland'={ length(pollenListDE) },

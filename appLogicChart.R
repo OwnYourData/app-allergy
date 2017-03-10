@@ -21,9 +21,11 @@ pollData <- function(pollSelect){
         if(pollSelect == 'keine'){
                 data.frame()
         } else {
-                plz <- strsplit(pollSelect, ':')[[1]][1]
+                location <- strsplit(pollSelect, ':')[[1]][1]
+                country <- strsplit(location, '-')[[1]][1]
+                plz <- strsplit(location, '-')[[1]][2]
                 typ <- trimws(strsplit(pollSelect, ':')[[1]][2])
-                repo <- paste0(app_id, '.pollination', plz)
+                repo <- paste0(app_id, '.pollination_', country, '-', plz)
                 data <- repoData(repo)
                 data <- data[data$pollType == typ, ]
                 if(nrow(data) > 0){

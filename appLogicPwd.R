@@ -37,7 +37,12 @@ plzList <- function(){
                 plzPollList <- c(apply(allItems, 1, function(x){
                         as.character(sort(mapply(
                                 paste0, 
-                                rep(x['plzCode'], 
+                                rep(paste0(switch(x['country'],
+                                                  'Österreich'='A-',
+                                                  'Deutschland'='D-',
+                                                  'Schweiz'='CH-',
+                                                  { '' } ),
+                                           x['plzCode']),
                                     switch(x['country'],
                                            'Österreich'={ length(pollenListAT) },
                                            'Deutschland'={ length(pollenListDE) },
@@ -50,7 +55,7 @@ plzList <- function(){
                                            'Schweiz'={ pollenListCH },
                                            { data.frame() } ), 
                                     length(x['plzCode'])))))
-                }))
+                }))                
                 poll1SelectDefault <- plzPollList[1]
                 poll2SelectDefault <- plzPollList[2]
                 poll3SelectDefault <- plzPollList[3]
