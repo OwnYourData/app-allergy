@@ -5,6 +5,7 @@
 appName <- 'allergy'
 appTitle <- 'Allergie-Tagebuch'
 app_id <- 'eu.ownyourdata.allergy'
+helpUrl <- 'https://www.ownyourdata.eu/apps/allergy'
 mobileUrl <- 'https://allergie-mobil.datentresor.org'
 
 # definition of data structure
