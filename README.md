@@ -1,7 +1,14 @@
 # <img src="https://github.com/OwnYourData/app-allergy/raw/master/www/app_logo.png" width="92"> Allergie-Tagebuch
 
-Das [OwnYourData](https://www.ownyourdata.eu) Allergie-Tagebuch erlaubt den Vergleich zwischen gemessener Pollenbelastung und subjektiven Befinden.
+Viele Menschen leiden unter Allergien ohne dass sie genau wissen, auf welche Allergene ihr Körper überreagiert. Mit dem Allergie-Tagebuch kannst du dein subjektives Befinden mit der tatsächlichen Belastung in deiner Umgebung vergleichen und gleichzeitig überprüfen, ob eventuell eingenommene Medikamente die erwartete Wirkung zeigen.
 
+Mehr Infos, Screenshots und Demo: https://www.ownyourdata.eu/apps/allergy
+
+**Dein Datentresor**
+Das Allergie-Tagebuch wird in einem sicheren Datentresor installiert. Üblicherweise musst Du Deine Daten an die Betreiber von Webservices und Apps weitergeben, um diese nutzen zu können. OwnYourData dreht den Spieß jedoch um: Du behältst all Deine Daten und Du verwahrst sie in Deinem eigenen Datentresor. Apps (Datensammlung, Algorithmen und Visualisierung) holst Du zu Dir, in den Datentresor hinein.
+
+Mehr Infos und Demo: https://www.ownyourdata.eu  
+Hintergrund-Infos für Entwickler: https://www.ownyourdata.eu/developer/
 
 ## Installation
 
