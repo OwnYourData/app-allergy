@@ -162,6 +162,7 @@ observeEvent(input$saveAllergyInput, {
 })
 
 output$tableList <- DT::renderDataTable(datatable({
+        ins <- input$tableSelect
         switch(as.character(input$tableSelect),
                'persönliche Aufzeichnungen'={
                        condData <- dateRangeSelect(
@@ -180,6 +181,8 @@ output$tableList <- DT::renderDataTable(datatable({
                        }
                        data },
                { pollData <- dateRangeSelect(pollData(input$tableSelect))
+               app <- currApp()
+save(pollData, ins, app, file='tmpPolls.RData')
                  if(nrow(pollData) > 0){
                          pollData$Datum <- format(as.POSIXct(pollData$timestamp, 
                                                              origin='1970-01-01'), 

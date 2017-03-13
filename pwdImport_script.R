@@ -40,8 +40,7 @@ if('error'%in%names(retVal)){
 data.frame()
 }else{
 if(!is.null(retVal$message)){
-if(retVal$message==
-'error.accessDenied'){
+if(retVal$message=='error.accessDenied'){
 data.frame()
 }else{
 do.call(rbind,lapply(retVal,data.frame))}
@@ -105,7 +104,7 @@ deleteItem<-function(app,repo_url,id){
 headers<-defaultHeaders(app[['token']])
 item_url<-paste0(repo_url,'/',id)
 response<-tryCatch(
-httr::DELETE(item_url,add_headers(headers)),
+httr::DELETE(item_url,httr::add_headers(headers)),
 error=function(e){
 return(NA)})
 response}
