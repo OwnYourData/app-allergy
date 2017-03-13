@@ -1,6 +1,4 @@
-# Allergie-Tagebuch
-
-<img src="https://github.com/OwnYourData/app-allergy/raw/master/www/app_logo.png" width="128">
+# <img src="https://github.com/OwnYourData/app-allergy/raw/master/www/app_logo.png" width="92"> Allergie-Tagebuch
 
 Das [OwnYourData](https://www.ownyourdata.eu) Allergie-Tagebuch erlaubt den Vergleich zwischen gemessener Pollenbelastung und subjektiven Befinden.
 
