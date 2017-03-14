@@ -45,6 +45,35 @@ Das Allergie-Tagebuch steht auch für die Architektur armhf zur Verfügung. Die 
 * zur einfachen Installation von Docker am Raspberry empfehlen wir die SD-Card Images von Hypriot: http://blog.hypriot.com/downloads/
 * Befehl zum Start des Containers am Raspberry: `docker run -p 3838:3838 oydeu/app-allergy_armhf`
 
+## Datenstruktur
+
+Die folgenden Listen werden vom Allergie-Tagebuch verwendet:
+
+* Befinden  
+  * `date` - Datum im Format YYYY-MM-DD  
+  * `value` - Skalierung des Befindens von 1-sehr gut bis 6-sehr schlecht  
+  
+* Medikamenteneinnahme  
+  * `date` - Datum im Format YYYY-MM-DD  
+  * `value` - Logisches Feld mit den Werten `true` oder `false`  
+    
+* Tagebuch  
+  * `date` - Datum im Format YYYY-MM-DD  
+  * `value` - Text  
+    
+* [Pollenbelastung]  
+  * `timestamp` - Zeistempel in Millisekunden seit 1.1.1970 UTC  
+  * `pollType` - Pollen Typ in der Schreibweise wie von https://polleninfo.org verwendet  
+  * `value` - Pollenbelastung in der Skalierung von 0-keine Belastung bis 4-sehr starke Belastung  
+    
+* Allergie-Skript - R Skript zum Import der Pollenbelastung der im Scheduler konfigurierten Orte  
+  * `name` - eindeutiger Name  
+  * `script` - base64 enkodiertes R Skript  
+    
+* Konfiguration und Konfiguration (Mobil) - gespeicherte Filterauswahl für Visualisierung  
+* Scheduler, Scheduler Verlauf und Scheduler Status  - siehe [service-scheduler](https://github.com/OwnYourData/service-scheduler)  
+* Info - Informationen zum Datentresor
+
 
 ## Verbessere die Kontoentwicklungs-App
 
