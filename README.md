@@ -10,7 +10,7 @@ Das Allergie-Tagebuch wird in einem sicheren Datentresor installiert. Üblicherw
 Mehr Infos und Demo: https://www.ownyourdata.eu  
 Hintergrund-Infos für Entwickler: https://www.ownyourdata.eu/developer/
 
-## Installation
+<h2 style="font-size: 2em; margin-top: 56px;">Installation</h2>
 
 Du kannst entscheiden wo Du Deinen Datentresor einrichten und Deine Apps installieren möchtest: auf Deinem persönlichen OwnYourData-Server, auf einem anderen Cloud-Dienst Deiner Wahl, auf Deinem eigenen Computer oder auf einem Raspberry Pi bei Dir daheim.
 
