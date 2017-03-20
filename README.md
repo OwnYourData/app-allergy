@@ -70,7 +70,7 @@ Die folgenden Listen werden vom Allergie-Tagebuch verwendet:
 * Info - Informationen zum Datentresor
 
 
-## Verbessere die Kontoentwicklungs-App
+## Verbessere das Allergie-Tagebuch
 
 Bitte melde Fehler oder Vorschläge für neue Features / UX-Verbesserungen im [GitHub Issue-Tracker](https://github.com/OwnYourData/app-allergy/issues) und halte dich dabei an die [Contributor Guidelines](https://github.com/twbs/ratchet/blob/master/CONTRIBUTING.md).
 
