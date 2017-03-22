@@ -53,9 +53,7 @@ Die folgenden Listen werden vom Allergie-Tagebuch verwendet:
     - `date`: Datum im Format YYYY-MM-DD    
     - `value`: Skalierung des Befindens von 1-sehr gut bis 6-sehr schlecht    
 * Medikamenteneinnahme    
-    - `date`: Datum im Format YYYY-MM-DD    p#sub-feature {
-    margin-left: 47px;
-}
+    - `date`: Datum im Format YYYY-MM-DD    
     - `value`: Logisches Feld mit den Werten `true` oder `false`    
 * Tagebuch    
     - `date`: Datum im Format YYYY-MM-DD    
