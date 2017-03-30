@@ -14,7 +14,7 @@ Hintergrund-Infos für Entwickler: https://www.ownyourdata.eu/developer/
 
 ## Installation
 
-Du kannst entscheiden wo du deinen Datentresor einrichten und deine Apps installieren möchtest: auf deinem persönlichen OwnYourData-Server, auf einem anderen Cloud-Dienst deiner Wahl, auf deinem eigenen Computer oder auf einem Raspberry Pi bei Dir daheim.
+Du kannst entscheiden wo du deinen Datentresor einrichten und deine Apps installieren möchtest: auf deinem persönlichen OwnYourData-Server, auf einem anderen Cloud-Dienst deiner Wahl, auf deinem eigenen Computer oder auf einem Raspberry Pi bei dir daheim.
 
 ### Installation am OwnYourData-Server
 
@@ -23,7 +23,7 @@ Diese Installation ist am einfachsten: Fordere deinen Datentresor an: https://ww
 ### Installation bei Cloud Diensten
 
 Verschiedene Cloud Dienste bieten das Hosting von [Docker](https://www.docker.com) Containern an, z.B. https://sloppy.io oder https://elastx.se. Das Allergie-Tagebuch steht als Docker-Image unter dem Namen `oydeu/app-allergy` auf Dockerhub hier zur Verfügung: https://hub.docker.com/r/oydeu/app-allergy/. (Da das Allergie-Tagebuch auch in einer Variante für Smartphones zur Verfügung steht, soll auch das Image `oydeu/app-allergy_mobile` verwendet werden.)  
-Starte den Container und verbinde Dich im Konfigurations-Dialog mit deinem Datentresor.
+Starte den Container und verbinde dich im Konfigurations-Dialog mit deinem Datentresor.
 
 ### Installation am eigenen Computer/Laptop
 
