@@ -22,7 +22,7 @@ Diese Installation ist am einfachsten: Fordere deinen Datentresor an: https://ww
 
 ### Installation bei Cloud Diensten
 
-Verschiedene Cloud Dienste bieten das Hosting von [Docker](https://www.docker.com) Containern an, z.B. https://sloppy.io oder https://elastx.se. Das Allergie-Tagebuch steht als Docker-Image unter dem Namen `oydeu/app-allergy` auf Dockerhub hier zur Verfügung: https://hub.docker.com/r/oydeu/app-allergy/. (Da das Allergie-Tagebuch auch in einer Variante für Smartphones zur Verfügung steht, soll auch das Image `oydeu/app-allergy_mobile` verwendet werden.)  
+Verschiedene Cloud Dienste bieten das Hosting von [Docker](https://www.docker.com) Containern an, z.B. https://sloppy.io oder https://elastx.se. Das Allergie-Tagebuch steht als Docker-Image unter dem Namen `oydeu/app-allergy` auf Dockerhub hier zur Verfügung: https://hub.docker.com/r/oydeu/app-allergy/. (Da das Allergie-Tagebuch auch in einer Variante für Smartphones zur Verfügung steht, soll auch das Image `oydeu/app-allergy-mobile` verwendet werden.)  
 Starte den Container und verbinde dich im Konfigurations-Dialog mit deinem Datentresor.
 
 ### Installation am eigenen Computer/Laptop
