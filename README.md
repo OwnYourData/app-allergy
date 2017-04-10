@@ -63,7 +63,7 @@ Die folgenden Listen werden vom Allergie-Tagebuch verwendet:
     - `date`: Datum im Format YYYY-MM-DD    
     - `value`: Text    
 * [Pollenbelastung]    
-    - `timestamp`: Zeistempel in Millisekunden seit 1.1.1970 UTC    
+    - `timestamp`: Zeitstempel in Millisekunden seit 1.1.1970 UTC    
     - `pollType`: Pollen Typ in der Schreibweise wie von https://polleninfo.org verwendet    
     - `value`: Pollenbelastung in der Skalierung von 0-keine Belastung bis 4-sehr starke Belastung    
 * Allergie-Skript - R Skript zum Import der Pollenbelastung der im Scheduler konfigurierten Orte    
