@@ -22,6 +22,11 @@ observe({
 
 observeEvent(input$saveAllergyEmail, {
         email <- input$allergyEmail
+        mobile_url <- paste0(
+                mobileUrl, 
+                '?PIA_URL=', piaUrl,
+                '&APP_KEY=', appKey,
+                '&APP_SECRET=', appSecret)
         diaryEmailTxt <- paste0(diaryEmailText,
                                 '<p>Ebenfalls hast du die Möglichkeit diese <a href="',
                                 mobile_url,
