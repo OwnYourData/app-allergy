@@ -22,6 +22,10 @@ observe({
 
 observeEvent(input$saveAllergyEmail, {
         email <- input$allergyEmail
+        diaryEmailTxt <- paste0(diaryEmailText,
+                                '<p>Ebenfalls hast du die Möglichkeit diese <a href="',
+                                mobile_url,
+                                '">Daten in der Handy-App des Allergie-Tagebuchs zu erfassen</a>.')
         if(validEmail(email)){
                 app <- currApp()
                 schedulerEmail <- getPiaSchedulerEmail(app)
@@ -63,7 +67,7 @@ observeEvent(input$saveAllergyEmail, {
                                 appTitle,
                                 email,
                                 'Dein Befinden für das Allergie-Tagebuch',
-                                diaryEmailText,
+                                diaryEmailTxt,
                                 '0 8 * * *',
                                 response_structure)
                         setAllergyEmailStatus('der Versand täglicher Emails wurde erfolgreich eingerichtet')
@@ -73,7 +77,7 @@ observeEvent(input$saveAllergyEmail, {
                                 appTitle,
                                 email,
                                 'Dein Befinden für das Allergie-Tagebuch',
-                                diaryEmailText,
+                                diaryEmailTxt,
                                 '0 8 * * *',
                                 response_structure,
                                 id=schedulerEmail[['id']])
